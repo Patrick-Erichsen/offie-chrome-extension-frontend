@@ -1,0 +1,34 @@
+{
+  "name": "Offie",
+  "description": "Improve your Airbnb search experience with more detailed WiFi speed and workspace information",
+  "manifest_version": 2,
+  "content_security_policy": "script-src 'self' https://cdn.firebase.com https://*.firebaseio.com; object-src 'self'",
+  "version": "0.0.1",
+  "icons": {
+    "16": "img/offie-logo-16.png",
+    "48": "img/offie-logo-48.png",
+    "128": "img/offie-logo-128.png"
+  },
+  "browser_action": {
+    "default_icon": {
+      "16": "img/offie-logo-16.png",
+      "48": "img/offie-logo-48.png",
+      "128": "img/offie-logo-128.png"
+    }
+  },
+  "background": {
+    "scripts": [
+      "background.js"
+    ],
+    "persistent": false
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://*.airbnb.com/s/*"],
+      "exclude_matches": ["https://*.airbnb.com/s/all*"],
+      "js": [
+        "content.js"
+      ]
+    }
+  ]
+}
