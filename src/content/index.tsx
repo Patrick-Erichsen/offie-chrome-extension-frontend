@@ -1,25 +1,20 @@
-import * as React from 'react'
-import ReactDOM from 'react-dom'
-import App from './App'
-import { FILTER_CHIP_GROUP_ID } from './selectors'
+import '@fontsource/montserrat';
+import { ThemeProvider } from '@mui/material';
+import * as React from 'react';
+import ReactDOM from 'react-dom';
+import App from './App';
+import theme from './theme';
 
-const filterChips = document.getElementById(FILTER_CHIP_GROUP_ID)
+const rootOffieNode = document.createElement('div');
+rootOffieNode.id = 'offie-node-root';
 
-const app = document.createElement('div')
-
-app.id = 'root'
-
-if (!filterChips) {
-    throw new Error(
-        `Failed to find filter chips with ID: ${FILTER_CHIP_GROUP_ID}`
-    )
-}
-
-filterChips.appendChild(app)
+document.body.appendChild(rootOffieNode);
 
 ReactDOM.render(
     <React.StrictMode>
-        <App />
+        <ThemeProvider theme={theme}>
+            <App />
+        </ThemeProvider>
     </React.StrictMode>,
-    document.getElementById('root')
-)
+    rootOffieNode
+);
