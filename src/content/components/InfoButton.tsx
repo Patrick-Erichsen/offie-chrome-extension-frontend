@@ -17,7 +17,7 @@ export type InfoButtonKeys =
 
 export type InfoButtonTextVals =
     | 'No Wifi info'
-    | 'No reviews mentioning Wifi'
+    | 'No Wifi reviews'
     | 'No recent Wifi reviews'
     | 'Good Wifi'
     | 'Okay Wifi'
@@ -27,7 +27,7 @@ export const MS_TWO_YEARS = 63113904000;
 
 export const INFO_BUTTON_TEXT_VALS: { [key: string]: InfoButtonTextVals } = {
     UNKNOWN: 'No Wifi info',
-    EMPTY_REVIEWS: 'No reviews mentioning Wifi',
+    EMPTY_REVIEWS: 'No Wifi reviews',
     NO_RECENT_REVIEWS: 'No recent Wifi reviews',
     GOOD_WIFI: 'Good Wifi',
     OKAY_WIFI: 'Okay Wifi',

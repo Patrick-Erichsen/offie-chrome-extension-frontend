@@ -8,7 +8,7 @@
         "build": "NODE_ENV=prod webpack --mode=production",
         "start": "NODE_ENV=dev webpack --watch --mode=development",
         "prettier": "prettier 'src/**/*.{ts,tsx}'",
-        "clean": "rm -rf dist/",
+        "clean": "rm -rf dist/ node_modules",
         "prettier:fix": "prettier --write 'src/**/*.{ts,tsx}'",
         "lint": "eslint 'src/**/*.{ts,tsx}'",
         "lint:fix": "eslint --fix 'src/**/*.{ts,tsx}'"

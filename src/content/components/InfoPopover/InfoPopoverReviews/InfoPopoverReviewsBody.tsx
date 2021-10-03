@@ -20,12 +20,17 @@ export const InfoPopoverReviewItem = ({
 
     return (
         <Stack direction="row" spacing={4} justifyContent="space-between">
-            <Stack direction="row" alignItems="center" spacing={0.5}>
+            <Stack direction="row" alignItems="center" spacing={1}>
                 <InfoPopoverReviewsSentiment sentiment={review.sentiment} />
                 <Typography variant="body2">{`"${review.comments}"`}</Typography>
             </Stack>
 
-            <Typography variant="caption">
+            <Typography
+                variant="caption"
+                style={{
+                    color: '#717171',
+                }}
+            >
                 {`${monthStr} ${yearStr}`}
             </Typography>
         </Stack>

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import Amplify from 'aws-amplify';
-import OffieInfo from './OffieInfo';
-import { getAllListingIds } from './getListingIds';
+import OffieNode from './components/OffieNode';
+import { getAllListingIds, cleanupOffieNodes } from './utils';
 import amplifyConfig from './amplifyConfig';
 import { ListingsDetailsRes } from './types/Offie';
 import * as api from './api';
@@ -23,6 +23,8 @@ const App = (): JSX.Element | null => {
     });
 
     useEffect(() => {
+        cleanupOffieNodes();
+
         const interval = setInterval(async () => {
             const listings = document.querySelectorAll(
                 'div[itemprop=itemListElement]'
@@ -56,15 +58,15 @@ const App = (): JSX.Element | null => {
     }
 
     return (
-        <div>
-            {listingsIds.map((listingId) => (
-                <OffieInfo
+        <>
+            {...listingsIds.map((listingId) => (
+                <OffieNode
                     key={listingId}
                     listingId={listingId}
                     listingDetails={listingsRes.listingsDetails[listingId]}
                 />
             ))}
-        </div>
+        </>
     );
 };
 

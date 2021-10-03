@@ -145,8 +145,7 @@ typings/
 # Application
 # --------------------------------------------------
 
-# SAM Configuration
-.aws-sam/
+yarn.lock
 
 # Environment Variables
 env.json
