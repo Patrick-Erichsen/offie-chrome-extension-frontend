@@ -1,6 +1,6 @@
 /* eslint-disable import/prefer-default-export */
 import { API } from 'aws-amplify';
-import type { ListingsDetailsRes } from './types/Offie';
+import type { ListingsDetailsRes } from '../types/Offie';
 
 export const getListingsDetails = async (
     listingsIds: string[]

@@ -1,7 +1,6 @@
-import { Popover, Divider, Stack, PopoverProps } from '@mui/material';
-import { ListingDetails } from '../../types/Offie';
-import { InfoPopoverReviews } from './InfoPopoverReviews';
-import { InfoPopoverItem } from './InfoPopoverItem';
+import { Popover, PopoverProps } from '@mui/material';
+import { ListingDetails } from '../../../types/Offie';
+import { InfoPopoverBody } from './InfoPopoverBody';
 import { InfoPopoverTitle } from './InfoPopoverTitle';
 import InfoPopoverFooter from './InfoPopoverFooter';
 
@@ -20,7 +19,7 @@ export const getAnchorPosition = (
 
     const rect = anchorEl.getBoundingClientRect();
 
-    // Decrease y location by 10 to give padding from button anchor
+    // Padding from button anchor
     rect.y -= 10;
 
     return rect;
@@ -32,6 +31,10 @@ export const InfoPopover = ({
     anchorEl,
 }: InfoPopoverProps): JSX.Element => {
     const open = !!anchorEl;
+
+    const handleClose = () => {
+        onClose();
+    };
 
     return (
         <Popover
@@ -55,45 +58,8 @@ export const InfoPopover = ({
                 horizontal: 'left',
             }}
         >
-            <InfoPopoverTitle
-                onClose={() => {
-                    onClose();
-                }}
-            />
-
-            <div
-                style={{
-                    padding: '12px 24px',
-                    borderBottom: '1px solid #ebebeb',
-                }}
-            >
-                <Stack spacing={2}>
-                    <InfoPopoverItem
-                        title="Wifi speed"
-                        value={
-                            listingDetails.wifiSpeed
-                                ? `${listingDetails.wifiSpeed.toString()}mbps`
-                                : null
-                        }
-                    />
-
-                    <InfoPopoverItem
-                        title="Dedicated workspace"
-                        value={
-                            listingDetails.workspaceAmenities
-                                ? listingDetails.workspaceAmenities.toString()
-                                : null
-                        }
-                    />
-                </Stack>
-
-                <Divider style={{ margin: '12px 0px' }} />
-
-                <InfoPopoverReviews
-                    reviews={listingDetails.wifiSentiment.reviews}
-                />
-            </div>
-
+            <InfoPopoverTitle onClose={handleClose} />
+            <InfoPopoverBody listingDetails={listingDetails} />
             <InfoPopoverFooter />
         </Popover>
     );

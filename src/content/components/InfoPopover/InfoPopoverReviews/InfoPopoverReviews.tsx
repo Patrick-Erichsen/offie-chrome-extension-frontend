@@ -1,5 +1,5 @@
 import { Stack } from '@mui/material';
-import { WifiSentiment } from '../../../types/Offie';
+import { WifiSentiment } from '../../../../types/Offie';
 import { InfoPopoverReviewsBody } from './InfoPopoverReviewsBody';
 import { InfoPopoverReviewsTitle } from './InfoPopoverReviewsTitle';
 import InfoPopoverReviewsSentimentsKey from './InfoPopoverReviewsSentimentsKey';

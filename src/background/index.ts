@@ -1,5 +1,17 @@
+import { ChromeUrlUpdate } from '../types/Chrome';
+
 chrome.tabs.onUpdated.addListener((tabId, { url }) => {
     if (url) {
-        chrome.tabs.sendMessage(tabId, { url });
+        const newUrl: ChromeUrlUpdate = { url };
+
+        chrome.tabs.sendMessage(tabId, newUrl);
+    }
+});
+
+chrome.runtime.onInstalled.addListener(() => {
+    const uninstallUrl = process.env.OFFIE_UNINSTALL_URL;
+
+    if (uninstallUrl) {
+        chrome.runtime.setUninstallURL(uninstallUrl);
     }
 });

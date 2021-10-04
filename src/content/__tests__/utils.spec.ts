@@ -1,4 +1,4 @@
-import { WifiSentiment } from '../types/Offie';
+import { WifiSentiment } from '../../types/Offie';
 import * as utils from '../utils';
 
 describe('utils.ts', () => {

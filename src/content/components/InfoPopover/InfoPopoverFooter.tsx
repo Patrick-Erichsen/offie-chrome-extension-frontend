@@ -20,7 +20,7 @@ const InfoPopoverFooter = (): JSX.Element => {
                 }}
             >
                 <AirbnbLink
-                    href={`${process.env.OFFIE_URL}/feedback`}
+                    href={process.env.OFFIE_FEEDBACK_URL}
                     variant="subtitle2"
                 >
                     Feedback

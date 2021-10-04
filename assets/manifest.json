@@ -1,7 +1,7 @@
 {
   "name": "Offie",
   "description": "Improve your Airbnb search experience with more detailed WiFi speed and workspace information",
-  "manifest_version": 2,
+  "manifest_version": 3,
   "version": "0.0.1",
   "icons": {
     "16": "img/offie-logo-16.png",
@@ -16,10 +16,7 @@
     }
   },
   "background": {
-    "scripts": [
-      "background.js"
-    ],
-    "persistent": false
+    "service_worker": "background.js"
   },
   "permissions": [
     "tabs"

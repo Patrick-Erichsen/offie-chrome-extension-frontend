@@ -1,4 +1,4 @@
-import { ListingsDetailsRes } from '../types/Offie';
+import { ListingsDetailsRes } from '../../types/Offie';
 
 const mockListingsDetailsRes: ListingsDetailsRes = {
     listingsDetails: {

@@ -1,5 +1,5 @@
 import { Typography, Stack } from '@mui/material';
-import { WifiSentiment, ReviewWithSentiment } from '../../../types/Offie';
+import { WifiSentiment, ReviewWithSentiment } from '../../../../types/Offie';
 import { InfoPopoverReviewsSentiment } from './InfoPopoverReviewsSentiment';
 
 export interface InfoPopoverReviewsBodyProps {

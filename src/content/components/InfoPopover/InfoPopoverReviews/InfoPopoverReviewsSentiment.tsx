@@ -1,5 +1,5 @@
 import { Box, Theme } from '@mui/material';
-import { ReviewWithSentiment } from '../../../types/Offie';
+import { ReviewWithSentiment } from '../../../../types/Offie';
 
 export interface InfoPopoverReviewsSentimentProps {
     sentiment: ReviewWithSentiment['sentiment'];

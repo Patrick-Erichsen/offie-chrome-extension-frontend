@@ -1,19 +1,13 @@
 import { useState } from 'react';
-import ReactDOM from 'react-dom';
-import { ListingDetails } from '../types/Offie';
-import { getListingsDetailsElem, insertOffieNode } from '../utils';
+import { ListingDetails } from '../../types/Offie';
 import { InfoButton } from './InfoButton';
 import { InfoPopover } from './InfoPopover';
 
-export interface OffieNodeProps {
-    listingId: string;
+export interface OffieInfoProps {
     listingDetails: ListingDetails;
 }
 
-const OffieNode = ({
-    listingId,
-    listingDetails,
-}: OffieNodeProps): JSX.Element | null => {
+const OffieInfo = ({ listingDetails }: OffieInfoProps): JSX.Element | null => {
     const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
 
     const handleClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -24,19 +18,7 @@ const OffieNode = ({
         setAnchorEl(null);
     };
 
-    const listingDetailsElem = getListingsDetailsElem(listingId);
-
-    if (!listingDetailsElem) {
-        return null;
-    }
-
-    const offieNode = insertOffieNode(listingDetailsElem, listingId);
-
-    if (!offieNode) {
-        return null;
-    }
-
-    return ReactDOM.createPortal(
+    return (
         <>
             <InfoPopover
                 listingDetails={listingDetails}
@@ -47,9 +29,8 @@ const OffieNode = ({
                 onClick={handleClick}
                 wifiSentiment={listingDetails.wifiSentiment}
             />
-        </>,
-        offieNode
+        </>
     );
 };
 
-export default OffieNode;
+export default OffieInfo;

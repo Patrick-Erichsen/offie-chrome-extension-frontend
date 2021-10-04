@@ -1,5 +1,5 @@
 import type { SentimentScore } from '@aws-sdk/client-comprehend';
-import { WifiSentiment } from '../types/Offie';
+import { WifiSentiment } from '../../types/Offie';
 
 export type SentimenyKeysKeys = 'POSITIVE' | 'MIXED' | 'NEUTRAL' | 'NEGATIVE';
 

@@ -1,7 +1,6 @@
 import Url from 'url-parse';
 
 const NUM_ROWS_WITH_RARE_FIND = 6;
-
 const OFFIE_NODE_ID_PREFIX = 'offie-node-';
 
 export const getListingId = (listing: Element): string | null => {
@@ -120,30 +119,32 @@ export const insertBeforeRareFindBadge = (
     offieNode: Element
 ): boolean => {
     const rareFind = listingDetails.children[4] as HTMLElement;
+    rareFind.style.setProperty('gap', '5px');
+    rareFind.style.setProperty('display', 'flex');
 
-    rareFind.style.display = 'flex';
+    const rareFindBadge = rareFind.children[1] as HTMLElement;
+    rareFindBadge.style.setProperty('position', 'inherit', 'important');
 
     const rareFindBadgeHidden = rareFind.children[0] as HTMLElement;
-
-    console.log({ rareFindBadgeHidden });
-    rareFindBadgeHidden.style.visibility = 'collapse';
+    rareFindBadgeHidden.style.setProperty('display', 'none', 'important');
 
     rareFind.insertBefore(offieNode, rareFindBadgeHidden);
 
     return true;
 };
 
-export const insertOffieNode = (
-    listingDetails: Element,
-    listingId: string
-): Element | null => {
-    const hasRareFind =
-        listingDetails.children.length === NUM_ROWS_WITH_RARE_FIND;
+export const insertOffieNode = (listingId: string): Element | null => {
+    const listingDetails = getListingsDetailsElem(listingId);
+
+    if (!listingDetails) {
+        return null;
+    }
 
     const offieNode = document.createElement('div');
     offieNode.id = `${OFFIE_NODE_ID_PREFIX}${listingId}`;
 
-    // debugger;
+    const hasRareFind =
+        listingDetails.children.length === NUM_ROWS_WITH_RARE_FIND;
 
     const insertionOpRes = hasRareFind
         ? insertBeforeRareFindBadge(listingDetails, offieNode)
@@ -154,14 +155,4 @@ export const insertOffieNode = (
     }
 
     return offieNode;
-};
-
-export const cleanupOffieNodes = (): void => {
-    const offieNodes = document.querySelectorAll(
-        `div[id*="${OFFIE_NODE_ID_PREFIX}"]`
-    );
-
-    Array.from(offieNodes).forEach((node) =>
-        node.parentNode?.removeChild(node)
-    );
 };

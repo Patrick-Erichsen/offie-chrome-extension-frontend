@@ -1,6 +1,6 @@
 import * as InfoButton from '../InfoButton';
 import mockListingsDetailsRes from '../../__mocks__/mockListingsDetailsRes';
-import type { ListingsDetailsRes, WifiSentiment } from '../../types/Offie';
+import type { ListingsDetailsRes, WifiSentiment } from '../../../types/Offie';
 import { sentimentKeys } from '../../utils';
 
 describe('<InfoButton />', () => {
