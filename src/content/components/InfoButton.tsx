@@ -91,7 +91,8 @@ export const InfoButton = ({
             style={{
                 // Custom Styles
                 textTransform: 'none',
-                fontWeight: 'bold',
+                fontWeight: 'bolder',
+                fontSize: 13,
                 // Airbnb styles
                 height: 24,
                 padding: '3px 8px',
@@ -99,7 +100,6 @@ export const InfoButton = ({
                 borderColor: '#dddddd',
                 border: '0.5px solid rgb(221, 221, 221)',
                 lineHeight: 18,
-                fontSize: 14,
                 outline: 0,
                 color: 'rgb(34, 34, 34)',
             }}

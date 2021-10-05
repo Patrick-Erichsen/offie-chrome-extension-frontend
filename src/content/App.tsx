@@ -1,14 +1,13 @@
 import { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import OffieInfo from './components/OffieInfo';
-import { getAllListingIds, insertOffieNode } from './utils';
+import { getAllListingIds, getOffieNode } from './utils';
 import { ListingsDetailsRes } from '../types/Offie';
 import * as api from './api';
 import { ChromeUrlUpdate } from '../types/Chrome';
 
 const App = (): JSX.Element | null => {
     const [location, setLocation] = useState<string>(window.location.href);
-    const [listingsIds, setListingsIds] = useState<string[]>([]);
     const [listingsRes, setListingsRes] = useState<ListingsDetailsRes | null>(
         null
     );
@@ -18,7 +17,6 @@ const App = (): JSX.Element | null => {
             // Clear state before setting new location that will trigger
             // a `useEffect` invokation
             setListingsRes(null);
-            setListingsIds([]);
 
             setLocation(request.url);
         };
@@ -40,9 +38,11 @@ const App = (): JSX.Element | null => {
                 // Need to clear interval before the async function
                 clearInterval(interval);
 
-                const newListingsIds = getAllListingIds(listings);
+                const listingIds = getAllListingIds(listings);
 
-                setListingsIds(newListingsIds);
+                const newListingsRes = await api.getListingsDetails(listingIds);
+
+                setListingsRes(newListingsRes);
             }
         }, 100);
 
@@ -51,27 +51,23 @@ const App = (): JSX.Element | null => {
         };
     }, [location]);
 
-    useEffect(() => {
-        const getNewListingsRes = async () => {
-            const newListingsRes = await api.getListingsDetails(listingsIds);
-
-            if (newListingsRes) {
-                setListingsRes(newListingsRes);
-            }
-        };
-
-        getNewListingsRes();
-    }, [listingsIds]);
-
     if (!listingsRes) {
         return null;
     }
 
-    const offiePortals = listingsIds.map((listingId) => {
-        const offieNode = insertOffieNode(listingId);
+    const listingIds = Object.keys(listingsRes.listingsDetails);
+
+    const offiePortals = listingIds.map((listingId) => {
+        const offieNode = getOffieNode(listingId);
 
         if (!offieNode) {
             return null;
+        }
+
+        if (!listingsRes.listingsDetails[listingId]) {
+            console.log(listingsRes.listingsDetails[listingId]);
+            console.log(listingId);
+            console.log(listingsRes);
         }
 
         return ReactDOM.createPortal(

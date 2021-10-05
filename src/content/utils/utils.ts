@@ -1,6 +1,8 @@
 import type { SentimentScore } from '@aws-sdk/client-comprehend';
 import { WifiSentiment } from '../../types/Offie';
 
+export const WIFI_AMENITY_ID = 4;
+
 export type SentimenyKeysKeys = 'POSITIVE' | 'MIXED' | 'NEUTRAL' | 'NEGATIVE';
 
 export const sentimentKeys: {

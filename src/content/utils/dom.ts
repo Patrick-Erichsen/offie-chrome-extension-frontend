@@ -1,7 +1,39 @@
 import Url from 'url-parse';
 
-const NUM_ROWS_WITH_RARE_FIND = 6;
-const OFFIE_NODE_ID_PREFIX = 'offie-node-';
+export const RARE_FIND_TEXT = 'Rare find';
+export const OFFIE_NODE_ID_PREFIX = 'offie-node-';
+
+export const MONTH_THREE_CHAR_CAPS = [
+    'JAN',
+    'FEB',
+    'MAR',
+    'APR',
+    'MAY',
+    'JUNE',
+    'JUL',
+    'AUG',
+    'SEP',
+    'OCT',
+    'NOV',
+    'DEC',
+];
+
+export const hasExpectedNumChildren = (
+    elem: Element,
+    numChildren: number,
+    varName: string
+): boolean => {
+    if (elem.children.length < numChildren) {
+        console.error(
+            `Failed to find expected number of children elements of '${varName}' \
+            Expected: ${numChildren}, Received: ${elem.children.length}`
+        );
+
+        return false;
+    }
+
+    return true;
+};
 
 export const getListingId = (listing: Element): string | null => {
     const urlMetaTag = listing.querySelector('meta[itemprop=url]');
@@ -82,73 +114,164 @@ export const getListingsDetailsElem = (listingId: string): Element | null => {
     return listingDetails;
 };
 
-// Row for info on num guests, beds, baths, bedrooms
-export const insertBuildingInfoRow = (
+export const insertNewDetailsRow = (
     listingDetails: Element,
     offieNode: HTMLElement
 ): boolean => {
-    const buildingInfo = listingDetails.children[3];
+    const lastChildIndex = listingDetails.children.length - 1;
 
-    const { parentNode: buildingInfoParent, nextSibling: buildingInfoSibling } =
-        buildingInfo;
-
-    if (!buildingInfoParent) {
-        console.error(
-            'Failed to find parent node of the building info element'
-        );
+    if (
+        !hasExpectedNumChildren(
+            listingDetails,
+            1,
+            `${insertNewDetailsRow.name}:listingDetails`
+        )
+    ) {
         return false;
     }
 
-    if (!buildingInfoSibling) {
-        console.error(
-            'Failed to find next sibling node of the building info element'
-        );
-        return false;
-    }
+    const lastRow = listingDetails.children[lastChildIndex];
 
     // eslint-disable-next-line no-param-reassign
     offieNode.style.marginTop = '12px';
 
-    buildingInfoParent.insertBefore(offieNode, buildingInfoSibling);
+    listingDetails.insertBefore(offieNode, lastRow);
 
     return true;
+};
+
+export const setBadgeStyles = (
+    badgeContainer: HTMLElement,
+    badge: HTMLElement
+): void => {
+    badgeContainer.style.setProperty('gap', '5px');
+    badgeContainer.style.setProperty('display', 'flex');
+    badge.style.setProperty('position', 'inherit', 'important');
 };
 
 export const insertBeforeRareFindBadge = (
     listingDetails: Element,
-    offieNode: Element
+    offieNode: HTMLElement
 ): boolean => {
-    const rareFind = listingDetails.children[4] as HTMLElement;
-    rareFind.style.setProperty('gap', '5px');
-    rareFind.style.setProperty('display', 'flex');
+    if (
+        !hasExpectedNumChildren(
+            listingDetails,
+            5,
+            `${insertBeforeRareFindBadge.name}:listingDetails`
+        )
+    ) {
+        return false;
+    }
 
-    const rareFindBadge = rareFind.children[1] as HTMLElement;
-    rareFindBadge.style.setProperty('position', 'inherit', 'important');
+    const rareFindContainer = listingDetails.children[4] as HTMLElement;
 
-    const rareFindBadgeHidden = rareFind.children[0] as HTMLElement;
+    if (
+        !hasExpectedNumChildren(
+            rareFindContainer,
+            2,
+            `${insertBeforeRareFindBadge.name}:rareFindContainer`
+        )
+    ) {
+        return false;
+    }
+
+    const rareFindBadge = rareFindContainer.children[1] as HTMLElement;
+    const rareFindBadgeHidden = rareFindContainer.children[0] as HTMLElement;
+
+    setBadgeStyles(rareFindContainer, rareFindBadge);
+
     rareFindBadgeHidden.style.setProperty('display', 'none', 'important');
 
-    rareFind.insertBefore(offieNode, rareFindBadgeHidden);
+    rareFindContainer.insertBefore(offieNode, rareFindBadgeHidden);
 
     return true;
 };
 
-export const insertOffieNode = (listingId: string): Element | null => {
-    const listingDetails = getListingsDetailsElem(listingId);
+export const insertBeforeDatesBadge = (
+    listingDetails: Element,
+    offieNode: HTMLElement
+): boolean => {
+    if (
+        !hasExpectedNumChildren(
+            listingDetails,
+            5,
+            `${insertBeforeDatesBadge.name}:listingDetails`
+        )
+    ) {
+        return false;
+    }
+
+    const datesBadgeContainer = listingDetails.children[4] as HTMLElement;
+
+    if (
+        !hasExpectedNumChildren(
+            datesBadgeContainer,
+            1,
+            `${insertBeforeDatesBadge.name}:datesBadgeContainer`
+        )
+    ) {
+        return false;
+    }
+
+    const datesBadge = datesBadgeContainer.children[0] as HTMLElement;
+
+    setBadgeStyles(datesBadgeContainer, datesBadge);
+
+    datesBadgeContainer.insertBefore(offieNode, datesBadge);
+
+    return true;
+};
+
+export const hasDatesBadge = (listingDetails: HTMLElement): boolean => {
+    const innerHtmlUpper = listingDetails.innerHTML.toUpperCase();
+
+    return MONTH_THREE_CHAR_CAPS.some((month) => {
+        return innerHtmlUpper.includes(month);
+    });
+};
+
+export const hasRareFind = (listingDetails: HTMLElement): boolean => {
+    return listingDetails.innerHTML.includes(RARE_FIND_TEXT);
+};
+export const insertOffieNode = (
+    listingId: string,
+    offieNode: HTMLElement
+): boolean => {
+    const listingDetails = getListingsDetailsElem(listingId) as HTMLElement;
 
     if (!listingDetails) {
-        return null;
+        return false;
+    }
+
+    let insertionOpRes;
+
+    if (hasRareFind(listingDetails)) {
+        insertionOpRes = insertBeforeRareFindBadge(listingDetails, offieNode);
+    } else if (hasDatesBadge(listingDetails)) {
+        insertionOpRes = insertBeforeDatesBadge(listingDetails, offieNode);
+    } else {
+        insertionOpRes = insertNewDetailsRow(listingDetails, offieNode);
+    }
+
+    return insertionOpRes;
+};
+
+export const getOffieNode = (listingId: string): Element | null => {
+    const offieNodeId = `${OFFIE_NODE_ID_PREFIX}${listingId}`;
+
+    const existingOffieNode = document.querySelector(`div[id*=${offieNodeId}]`);
+
+    // Avoid re-rendering into the DOM if the node already exists.
+    // This shouldn't happen, but is possible due to how React
+    // schedules renders / commits
+    if (existingOffieNode) {
+        return existingOffieNode;
     }
 
     const offieNode = document.createElement('div');
-    offieNode.id = `${OFFIE_NODE_ID_PREFIX}${listingId}`;
+    offieNode.id = offieNodeId;
 
-    const hasRareFind =
-        listingDetails.children.length === NUM_ROWS_WITH_RARE_FIND;
-
-    const insertionOpRes = hasRareFind
-        ? insertBeforeRareFindBadge(listingDetails, offieNode)
-        : insertBuildingInfoRow(listingDetails, offieNode);
+    const insertionOpRes = insertOffieNode(listingId, offieNode);
 
     if (!insertionOpRes) {
         return null;

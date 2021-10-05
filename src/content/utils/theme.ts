@@ -1,3 +1,4 @@
+/* eslint-disable import/prefer-default-export */
 import type { SentimentScore } from '@aws-sdk/client-comprehend';
 import { createTheme } from '@mui/material';
 
@@ -12,7 +13,7 @@ declare module '@mui/material/styles' {
     }
 }
 
-const theme = createTheme({
+export const theme = createTheme({
     typography: {
         fontFamily: [
             'Montserrat',
@@ -34,5 +35,3 @@ const theme = createTheme({
         Neutral: '#C4C4C4',
     },
 });
-
-export default theme;
