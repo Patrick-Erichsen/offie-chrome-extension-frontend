@@ -1,39 +1,10 @@
 import Url from 'url-parse';
 
-export const RARE_FIND_TEXT = 'Rare find';
 export const OFFIE_NODE_ID_PREFIX = 'offie-node-';
 
-export const MONTH_THREE_CHAR_CAPS = [
-    'JAN',
-    'FEB',
-    'MAR',
-    'APR',
-    'MAY',
-    'JUNE',
-    'JUL',
-    'AUG',
-    'SEP',
-    'OCT',
-    'NOV',
-    'DEC',
-];
-
-export const hasExpectedNumChildren = (
-    elem: Element,
-    numChildren: number,
-    varName: string
-): boolean => {
-    if (elem.children.length < numChildren) {
-        console.error(
-            `Failed to find expected number of children elements of '${varName}' \
-            Expected: ${numChildren}, Received: ${elem.children.length}`
-        );
-
-        return false;
-    }
-
-    return true;
-};
+const NUM_ROWS_WITH_BADGE = 6;
+const NUM_ROWS_WITH_BUILDING_INFO = 5;
+const NUM_ROWS_WITHOUT_BUILDING_INFO = 4;
 
 export const getListingId = (listing: Element): string | null => {
     const urlMetaTag = listing.querySelector('meta[itemprop=url]');
@@ -69,7 +40,7 @@ export const getAllListingIds = (listings: NodeListOf<Element>): string[] => {
     }, [] as string[]);
 };
 
-export const getListingsDetailsElem = (listingId: string): Element | null => {
+export const getListingDetailsElem = (listingId: string): Element | null => {
     const listingSelector = `meta[itemprop=url][content*="${listingId}"]`;
     const groupSelector = 'div[role=group]';
 
@@ -77,7 +48,7 @@ export const getListingsDetailsElem = (listingId: string): Element | null => {
 
     if (!listing) {
         console.error(
-            `Failed to find element with selector: '${listingSelector}'`
+            `Failed to find the 'listing' var in ${getListingDetailsElem.name}`
         );
         return null;
     }
@@ -88,7 +59,7 @@ export const getListingsDetailsElem = (listingId: string): Element | null => {
 
     if (!itemElement) {
         console.error(
-            `Failed to find parent node of element with selector: '${listingSelector}'`
+            `Failed to find the 'itemElement' var in ${getListingDetailsElem.name}`
         );
         return null;
     }
@@ -97,7 +68,7 @@ export const getListingsDetailsElem = (listingId: string): Element | null => {
 
     if (!group) {
         console.error(
-            `Failed to find an element with the following selector: '${groupSelector}'`
+            `Failed to find the 'group' var in ${getListingDetailsElem.name}`
         );
         return null;
     }
@@ -106,7 +77,7 @@ export const getListingsDetailsElem = (listingId: string): Element | null => {
 
     if (!listingDetails) {
         console.error(
-            `Failed to find the listing details 'div' as the third sibling of the '${groupSelector} selector`
+            `Failed to find the 'listingDetails' var in ${getListingDetailsElem.name}`
         );
         return null;
     }
@@ -115,145 +86,74 @@ export const getListingsDetailsElem = (listingId: string): Element | null => {
 };
 
 export const insertNewDetailsRow = (
-    listingDetails: Element,
+    listingsDetails: HTMLElement,
     offieNode: HTMLElement
 ): boolean => {
-    const lastChildIndex = listingDetails.children.length - 1;
-
-    if (
-        !hasExpectedNumChildren(
-            listingDetails,
-            1,
-            `${insertNewDetailsRow.name}:listingDetails`
-        )
-    ) {
-        return false;
-    }
-
-    const lastRow = listingDetails.children[lastChildIndex];
+    const lastRow =
+        listingsDetails.children[listingsDetails.childElementCount - 1];
 
     // eslint-disable-next-line no-param-reassign
     offieNode.style.marginTop = '12px';
 
-    listingDetails.insertBefore(offieNode, lastRow);
+    listingsDetails.insertBefore(offieNode, lastRow);
 
     return true;
 };
 
-export const setBadgeStyles = (
-    badgeContainer: HTMLElement,
-    badge: HTMLElement
-): void => {
+export const insertBeforeBadge = (
+    listingDetails: HTMLElement,
+    offieNode: HTMLElement
+): boolean => {
+    const badgeContainer = listingDetails.children[
+        listingDetails.childElementCount - 2
+    ] as HTMLElement;
+
+    if (!badgeContainer) {
+        console.error(
+            `Failed to find the 'badgeContainer' var in ${insertBeforeBadge.name}`
+        );
+
+        return false;
+    }
+
+    const numChildrenBadge = badgeContainer.childElementCount;
+
+    const displayBadge = badgeContainer.children[
+        numChildrenBadge - 1
+    ] as HTMLElement;
+
+    if (numChildrenBadge > 1) {
+        const rareFindBadgeHidden = badgeContainer.children[0] as HTMLElement;
+        rareFindBadgeHidden.style.setProperty('display', 'none', 'important');
+    }
+
     badgeContainer.style.setProperty('gap', '5px');
     badgeContainer.style.setProperty('display', 'flex');
-    badge.style.setProperty('position', 'inherit', 'important');
-};
+    displayBadge.style.setProperty('position', 'inherit', 'important');
 
-export const insertBeforeRareFindBadge = (
-    listingDetails: Element,
-    offieNode: HTMLElement
-): boolean => {
-    if (
-        !hasExpectedNumChildren(
-            listingDetails,
-            5,
-            `${insertBeforeRareFindBadge.name}:listingDetails`
-        )
-    ) {
-        return false;
-    }
-
-    const rareFindContainer = listingDetails.children[4] as HTMLElement;
-
-    if (
-        !hasExpectedNumChildren(
-            rareFindContainer,
-            2,
-            `${insertBeforeRareFindBadge.name}:rareFindContainer`
-        )
-    ) {
-        return false;
-    }
-
-    const rareFindBadge = rareFindContainer.children[1] as HTMLElement;
-    const rareFindBadgeHidden = rareFindContainer.children[0] as HTMLElement;
-
-    setBadgeStyles(rareFindContainer, rareFindBadge);
-
-    rareFindBadgeHidden.style.setProperty('display', 'none', 'important');
-
-    rareFindContainer.insertBefore(offieNode, rareFindBadgeHidden);
+    badgeContainer.insertBefore(offieNode, displayBadge);
 
     return true;
 };
 
-export const insertBeforeDatesBadge = (
-    listingDetails: Element,
-    offieNode: HTMLElement
-): boolean => {
-    if (
-        !hasExpectedNumChildren(
-            listingDetails,
-            5,
-            `${insertBeforeDatesBadge.name}:listingDetails`
-        )
-    ) {
-        return false;
-    }
-
-    const datesBadgeContainer = listingDetails.children[4] as HTMLElement;
-
-    if (
-        !hasExpectedNumChildren(
-            datesBadgeContainer,
-            1,
-            `${insertBeforeDatesBadge.name}:datesBadgeContainer`
-        )
-    ) {
-        return false;
-    }
-
-    const datesBadge = datesBadgeContainer.children[0] as HTMLElement;
-
-    setBadgeStyles(datesBadgeContainer, datesBadge);
-
-    datesBadgeContainer.insertBefore(offieNode, datesBadge);
-
-    return true;
-};
-
-export const hasDatesBadge = (listingDetails: HTMLElement): boolean => {
-    const innerHtmlUpper = listingDetails.innerHTML.toUpperCase();
-
-    return MONTH_THREE_CHAR_CAPS.some((month) => {
-        return innerHtmlUpper.includes(month);
-    });
-};
-
-export const hasRareFind = (listingDetails: HTMLElement): boolean => {
-    return listingDetails.innerHTML.includes(RARE_FIND_TEXT);
-};
 export const insertOffieNode = (
     listingId: string,
     offieNode: HTMLElement
 ): boolean => {
-    const listingDetails = getListingsDetailsElem(listingId) as HTMLElement;
+    const listingDetails = getListingDetailsElem(listingId) as HTMLElement;
 
     if (!listingDetails) {
         return false;
     }
 
-    let insertionOpRes;
-
-    if (hasRareFind(listingDetails)) {
-        insertionOpRes = insertBeforeRareFindBadge(listingDetails, offieNode);
-    } else if (hasDatesBadge(listingDetails)) {
-        insertionOpRes = insertBeforeDatesBadge(listingDetails, offieNode);
-    } else {
-        insertionOpRes = insertNewDetailsRow(listingDetails, offieNode);
+    switch (listingDetails.childElementCount) {
+        case NUM_ROWS_WITH_BADGE:
+            return insertBeforeBadge(listingDetails, offieNode);
+        case NUM_ROWS_WITH_BUILDING_INFO || NUM_ROWS_WITHOUT_BUILDING_INFO:
+            return insertNewDetailsRow(listingDetails, offieNode);
+        default:
+            return false;
     }
-
-    return insertionOpRes;
 };
 
 export const getOffieNode = (listingId: string): Element | null => {

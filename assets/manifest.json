@@ -8,7 +8,7 @@
     "48": "img/offie-logo-48.png",
     "128": "img/offie-logo-128.png"
   },
-  "browser_action": {
+  "action": {
     "default_icon": {
       "16": "img/offie-logo-16.png",
       "48": "img/offie-logo-48.png",
