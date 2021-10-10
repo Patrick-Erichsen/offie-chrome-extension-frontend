@@ -23,7 +23,31 @@ type ListingDetailsObj = ListingsDetailsRes['listingsDetails'];
 //     }
 // };
 
-const App = (): JSX.Element | null => {
+export const getNewListingDetails = async (
+    cachedListings: ListingDetailsObj | null,
+    newListingIds: string[]
+): Promise<ListingDetailsObj | null> => {
+    let listingIdsToFetch = newListingIds;
+
+    if (cachedListings) {
+        const cachedListingIds = Object.keys(cachedListings);
+        listingIdsToFetch = newListingIds.filter(
+            (newId) => !cachedListingIds.includes(newId)
+        );
+    }
+
+    if (listingIdsToFetch.length > 0) {
+        const res = await api.getListingsDetails(listingIdsToFetch);
+
+        if (res) {
+            return res.listingsDetails;
+        }
+    }
+
+    return null;
+};
+
+export const App = (): JSX.Element | null => {
     const [url, setUrl] = useState<string>(window.location.href);
     const [curListingIds, setCurListingIds] = useState<string[] | null>(null);
     const [listingDetails, setListingDetails] =
@@ -33,26 +57,6 @@ const App = (): JSX.Element | null => {
         setCurListingIds(null);
         setUrl(newUrl);
     });
-
-    // useEffect(() => {
-    //     const interval = setInterval(async () => {
-    //         const newListingIds = getAllListingIds();
-
-    //         if (newListingIds) {
-    //             clearInterval(interval);
-
-    //             const createNodesRes = tryCreateOffieNodes(newListingIds);
-
-    //             if (createNodesRes) {
-    //                 setCurListingIds(newListingIds);
-    //             }
-    //         }
-    //     }, 100);
-
-    //     return () => {
-    //         clearInterval(interval);
-    //     };
-    // }, [listingDetails, url]);
 
     useEffect(() => {
         const interval = setInterval(async () => {
@@ -66,28 +70,6 @@ const App = (): JSX.Element | null => {
 
                 const newListingIds = getAllListingIds(listings);
 
-                let listingIdsToFetch = newListingIds;
-
-                if (listingDetails) {
-                    const cachedListingIds = Object.keys(listingDetails);
-                    listingIdsToFetch = newListingIds.filter(
-                        (newId) => !cachedListingIds.includes(newId)
-                    );
-                }
-
-                if (listingIdsToFetch.length > 0) {
-                    const res = await api.getListingsDetails(listingIdsToFetch);
-
-                    if (res) {
-                        setListingDetails((oldListingDetails) => {
-                            return {
-                                ...oldListingDetails,
-                                ...res.listingsDetails,
-                            };
-                        });
-                    }
-                }
-
                 setCurListingIds(newListingIds);
             }
         }, 100);
@@ -97,42 +79,31 @@ const App = (): JSX.Element | null => {
         };
     }, [listingDetails, url]);
 
-    // useEffect(() => {
-    //     const test = async (newListingIds: string[]) => {
-    //         let listingIdsToFetch = newListingIds;
+    useEffect(() => {
+        const getNonCachedListings = async (newListingIds: string[]) => {
+            const newListingDetails = await getNewListingDetails(
+                listingDetails,
+                newListingIds
+            );
 
-    //         if (listingDetails) {
-    //             const cachedListingIds = Object.keys(listingDetails);
-    //             listingIdsToFetch = newListingIds.filter(
-    //                 (newId) => !cachedListingIds.includes(newId)
-    //             );
-    //         }
+            if (newListingDetails) {
+                setListingDetails((oldListingDetails) => {
+                    return {
+                        ...oldListingDetails,
+                        ...newListingDetails,
+                    };
+                });
+            }
+        };
 
-    //         if (listingIdsToFetch.length > 0) {
-    //             const res = await api.getListingsDetails(listingIdsToFetch);
-
-    //             if (res) {
-    //                 setListingDetails((oldListingDetails) => {
-    //                     return {
-    //                         ...oldListingDetails,
-    //                         ...res.listingsDetails,
-    //                     };
-    //                 });
-    //             }
-    //         }
-    //     };
-
-    //     if (curListingIds) {
-    //         test(curListingIds);
-    //     }
-    // }, [curListingIds, listingDetails]);
-
-    console.log({ listingDetails });
+        if (curListingIds) {
+            getNonCachedListings(curListingIds);
+        }
+    }, [curListingIds, listingDetails]);
 
     if (!listingDetails || !curListingIds) {
         return null;
     }
-    console.log(`cached listing ids: ${Object.keys(listingDetails).length}`);
 
     const offiePortals = curListingIds.map((listingId) => {
         const offieNode = getOffieNode(listingId);
@@ -153,5 +124,3 @@ const App = (): JSX.Element | null => {
 
     return <>{...offiePortals}</>;
 };
-
-export default App;

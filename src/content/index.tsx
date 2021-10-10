@@ -5,7 +5,7 @@ import Amplify from 'aws-amplify';
 import ReactDOM from 'react-dom';
 import { ThemeProvider } from '@mui/material';
 import { amplifyConfig, theme } from './utils';
-import App from './App';
+import { App } from './App';
 
 Amplify.configure(amplifyConfig);
 
