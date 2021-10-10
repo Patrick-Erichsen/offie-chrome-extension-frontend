@@ -1,6 +1,6 @@
 import Url from 'url-parse';
 
-export const OFFIE_NODE_ID_PREFIX = 'offie-node-';
+export const OFFIE_NODE_ID_PREFIX = 'offie-node';
 
 const NUM_ROWS_WITH_BADGE = 6;
 const NUM_ROWS_WITH_BUILDING_INFO = 5;
@@ -28,7 +28,13 @@ export const getListingId = (listing: Element): string | null => {
     return listingId;
 };
 
-export const getAllListingIds = (listings: NodeListOf<Element>): string[] => {
+export const getAllListingIds = (): string[] | null => {
+    const listings = document.querySelectorAll('div[itemprop=itemListElement]');
+
+    if (listings.length === 0) {
+        return null;
+    }
+
     return Array.from(listings).reduce((acc, listing) => {
         const listingId = getListingId(listing);
 
@@ -88,7 +94,7 @@ export const getListingDetailsElem = (listingId: string): Element | null => {
 export const insertNewDetailsRow = (
     listingsDetails: HTMLElement,
     offieNode: HTMLElement
-): boolean => {
+): void => {
     const lastRow =
         listingsDetails.children[listingsDetails.childElementCount - 1];
 
@@ -96,24 +102,20 @@ export const insertNewDetailsRow = (
     offieNode.style.marginTop = '12px';
 
     listingsDetails.insertBefore(offieNode, lastRow);
-
-    return true;
 };
 
 export const insertBeforeBadge = (
     listingDetails: HTMLElement,
     offieNode: HTMLElement
-): boolean => {
+): void => {
     const badgeContainer = listingDetails.children[
         listingDetails.childElementCount - 2
     ] as HTMLElement;
 
     if (!badgeContainer) {
-        console.error(
+        throw new Error(
             `Failed to find the 'badgeContainer' var in ${insertBeforeBadge.name}`
         );
-
-        return false;
     }
 
     const numChildrenBadge = badgeContainer.childElementCount;
@@ -132,50 +134,54 @@ export const insertBeforeBadge = (
     displayBadge.style.setProperty('position', 'inherit', 'important');
 
     badgeContainer.insertBefore(offieNode, displayBadge);
-
-    return true;
 };
 
 export const insertOffieNode = (
     listingId: string,
     offieNode: HTMLElement
-): boolean => {
+): void => {
     const listingDetails = getListingDetailsElem(listingId) as HTMLElement;
 
     if (!listingDetails) {
-        return false;
+        throw new Error(
+            `Failed to find listing details element for listing: ${listingId}`
+        );
     }
 
     switch (listingDetails.childElementCount) {
         case NUM_ROWS_WITH_BADGE:
-            return insertBeforeBadge(listingDetails, offieNode);
+            insertBeforeBadge(listingDetails, offieNode);
+            break;
         case NUM_ROWS_WITH_BUILDING_INFO || NUM_ROWS_WITHOUT_BUILDING_INFO:
-            return insertNewDetailsRow(listingDetails, offieNode);
+            insertNewDetailsRow(listingDetails, offieNode);
+            break;
         default:
-            return false;
+            throw new Error(
+                `Failed to find expected number of rows for listing: ${listingId}`
+            );
     }
 };
 
+const getOffieNodeId = (listingId: string) => {
+    return `${OFFIE_NODE_ID_PREFIX}-${listingId}`;
+};
+
 export const getOffieNode = (listingId: string): Element | null => {
-    const offieNodeId = `${OFFIE_NODE_ID_PREFIX}${listingId}`;
+    const offieNodeId = getOffieNodeId(listingId);
+    return document.getElementById(offieNodeId);
+};
 
-    const existingOffieNode = document.querySelector(`div[id*=${offieNodeId}]`);
+export const createOffieNodes = (listingIds: string[]): void => {
+    listingIds.forEach((listingId) => {
+        const existingOffieNode = getOffieNode(listingId);
 
-    // Avoid re-rendering into the DOM if the node already exists.
-    // This shouldn't happen, but is possible due to how React
-    // schedules renders / commits
-    if (existingOffieNode) {
-        return existingOffieNode;
-    }
+        if (existingOffieNode) {
+            return;
+        }
 
-    const offieNode = document.createElement('div');
-    offieNode.id = offieNodeId;
+        const offieNode = document.createElement('div');
+        offieNode.id = getOffieNodeId(listingId);
 
-    const insertionOpRes = insertOffieNode(listingId, offieNode);
-
-    if (!insertionOpRes) {
-        return null;
-    }
-
-    return offieNode;
+        insertOffieNode(listingId, offieNode);
+    });
 };
