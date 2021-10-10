@@ -1,32 +1,58 @@
 import { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import OffieInfo from './components/OffieInfo';
-import { getAllListingIds, getOffieNode } from './utils';
-import { ListingsDetailsRes } from '../types/Offie';
+import { getAllListingIds, getOffieNode, isError } from './utils';
 import * as api from './api';
-import { ChromeUrlUpdate } from '../types/Chrome';
+import { ListingsDetailsRes } from '../types/Offie';
+import { useUrlChrome } from './hooks/useUrlChrome';
+
+type ListingDetailsObj = ListingsDetailsRes['listingsDetails'];
+
+// export const tryCreateOffieNodes = (listingIds: string[]): boolean => {
+//     try {
+//         createOffieNodes(listingIds);
+//         return true;
+//     } catch (err) {
+//         if (isError(err)) {
+//             console.error(
+//                 `Failed to create Offie nodes with err: ${err.message}`
+//             );
+//         }
+
+//         return false;
+//     }
+// };
 
 const App = (): JSX.Element | null => {
-    const [location, setLocation] = useState<string>(window.location.href);
-    const [listingsRes, setListingsRes] = useState<ListingsDetailsRes | null>(
-        null
-    );
+    const [url, setUrl] = useState<string>(window.location.href);
+    const [curListingIds, setCurListingIds] = useState<string[] | null>(null);
+    const [listingDetails, setListingDetails] =
+        useState<ListingDetailsObj | null>(null);
 
-    useEffect(() => {
-        const updateLocationOnUrlChange = (request: ChromeUrlUpdate) => {
-            // Clear state before setting new location that will trigger
-            // a `useEffect` invokation
-            setListingsRes(null);
+    useUrlChrome((newUrl) => {
+        setCurListingIds(null);
+        setUrl(newUrl);
+    });
 
-            setLocation(request.url);
-        };
+    // useEffect(() => {
+    //     const interval = setInterval(async () => {
+    //         const newListingIds = getAllListingIds();
 
-        chrome.runtime.onMessage.addListener(updateLocationOnUrlChange);
+    //         if (newListingIds) {
+    //             clearInterval(interval);
 
-        return () => {
-            chrome.runtime.onMessage.removeListener(updateLocationOnUrlChange);
-        };
-    }, []);
+    //             const createNodesRes = tryCreateOffieNodes(newListingIds);
+
+    //             if (createNodesRes) {
+    //                 setCurListingIds(newListingIds);
+    //             }
+    //         }
+    //     }, 100);
+
+    //     return () => {
+    //         clearInterval(interval);
+    //     };
+    // }, [listingDetails, url]);
 
     useEffect(() => {
         const interval = setInterval(async () => {
@@ -38,42 +64,89 @@ const App = (): JSX.Element | null => {
                 // Need to clear interval before the async function
                 clearInterval(interval);
 
-                const listingIds = getAllListingIds(listings);
+                const newListingIds = getAllListingIds(listings);
 
-                const newListingsRes = await api.getListingsDetails(listingIds);
+                let listingIdsToFetch = newListingIds;
 
-                setListingsRes(newListingsRes);
+                if (listingDetails) {
+                    const cachedListingIds = Object.keys(listingDetails);
+                    listingIdsToFetch = newListingIds.filter(
+                        (newId) => !cachedListingIds.includes(newId)
+                    );
+                }
+
+                if (listingIdsToFetch.length > 0) {
+                    const res = await api.getListingsDetails(listingIdsToFetch);
+
+                    if (res) {
+                        setListingDetails((oldListingDetails) => {
+                            return {
+                                ...oldListingDetails,
+                                ...res.listingsDetails,
+                            };
+                        });
+                    }
+                }
+
+                setCurListingIds(newListingIds);
             }
         }, 100);
 
         return () => {
             clearInterval(interval);
         };
-    }, [location]);
+    }, [listingDetails, url]);
 
-    if (!listingsRes) {
+    // useEffect(() => {
+    //     const test = async (newListingIds: string[]) => {
+    //         let listingIdsToFetch = newListingIds;
+
+    //         if (listingDetails) {
+    //             const cachedListingIds = Object.keys(listingDetails);
+    //             listingIdsToFetch = newListingIds.filter(
+    //                 (newId) => !cachedListingIds.includes(newId)
+    //             );
+    //         }
+
+    //         if (listingIdsToFetch.length > 0) {
+    //             const res = await api.getListingsDetails(listingIdsToFetch);
+
+    //             if (res) {
+    //                 setListingDetails((oldListingDetails) => {
+    //                     return {
+    //                         ...oldListingDetails,
+    //                         ...res.listingsDetails,
+    //                     };
+    //                 });
+    //             }
+    //         }
+    //     };
+
+    //     if (curListingIds) {
+    //         test(curListingIds);
+    //     }
+    // }, [curListingIds, listingDetails]);
+
+    console.log({ listingDetails });
+
+    if (!listingDetails || !curListingIds) {
         return null;
     }
+    console.log(`cached listing ids: ${Object.keys(listingDetails).length}`);
 
-    const listingIds = Object.keys(listingsRes.listingsDetails);
-
-    const offiePortals = listingIds.map((listingId) => {
+    const offiePortals = curListingIds.map((listingId) => {
         const offieNode = getOffieNode(listingId);
 
         if (!offieNode) {
             return null;
         }
 
-        if (!listingsRes.listingsDetails[listingId]) {
-            console.log(listingsRes.listingsDetails[listingId]);
-            console.log(listingId);
-            console.log(listingsRes);
+        if (!listingDetails[listingId]) {
+            return null;
         }
 
         return ReactDOM.createPortal(
-            <OffieInfo
-                listingDetails={listingsRes.listingsDetails[listingId]}
-            />,
+            <OffieInfo listingDetails={listingDetails[listingId]} />,
             offieNode
         );
     });

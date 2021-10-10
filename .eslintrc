@@ -2,7 +2,8 @@
   "extends": ["airbnb-typescript-prettier", "plugin:react/jsx-runtime"],
   "rules": {
     "@typescript-eslint/ban-ts-comment": "off",
-    "no-console": "off"
+    "no-console": "off",
+    "import/prefer-default-export": "off"
   },
   "settings": {
     "import/resolver": {

@@ -15,10 +15,10 @@ rootOffieNode.id = 'offie-node-root';
 document.body.appendChild(rootOffieNode);
 
 ReactDOM.render(
-    <ThemeProvider theme={theme}>
-        <StrictMode>
+    <StrictMode>
+        <ThemeProvider theme={theme}>
             <App />
-        </StrictMode>
-    </ThemeProvider>,
+        </ThemeProvider>
+    </StrictMode>,
     rootOffieNode
 );
