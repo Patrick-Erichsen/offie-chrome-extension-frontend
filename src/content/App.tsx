@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom';
-import OffieInfo from './components/OffieInfo';
+import { OffieButton } from './components/OffieButton';
 import { getAllListingIds, getOffieNode } from './utils';
 import * as api from './api';
 import { ListingsDetailsRes } from '../types/Offie';
@@ -102,7 +102,7 @@ export const App = (): JSX.Element | null => {
         }
 
         return ReactDOM.createPortal(
-            <OffieInfo listingDetails={listingDetails[listingId]} />,
+            <OffieButton listingDetails={listingDetails[listingId]} />,
             offieNode
         );
     });
