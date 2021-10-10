@@ -1,9 +1,9 @@
-import * as InfoButton from '../InfoButton';
+import * as OffieButton from '../OffieButton';
 import mockListingsDetailsRes from '../../__mocks__/mockListingsDetailsRes';
 import type { ListingsDetailsRes, WifiSentiment } from '../../../types/Offie';
 import { sentimentKeys } from '../../utils';
 
-describe('<InfoButton />', () => {
+describe('<OffieButton />', () => {
     describe('getButtonText', () => {
         let mockListingsDetails: ListingsDetailsRes;
         let mockWifiSentiment: WifiSentiment;
@@ -23,16 +23,16 @@ describe('<InfoButton />', () => {
         it('returns a `UNKNOWN` text when the reviews property is falsey', () => {
             mockWifiSentiment.reviews = null;
 
-            expect(InfoButton.getButtonText(mockWifiSentiment)).toEqual(
-                InfoButton.INFO_BUTTON_TEXT_VALS.UNKNOWN
+            expect(OffieButton.getButtonText(mockWifiSentiment)).toEqual(
+                OffieButton.INFO_BUTTON_TEXT_VALS.UNKNOWN
             );
         });
 
         it('returns a `EMPTY_REVIEWS` text when the reviews array is empty', () => {
             mockWifiSentiment.reviews = [];
 
-            expect(InfoButton.getButtonText(mockWifiSentiment)).toEqual(
-                InfoButton.INFO_BUTTON_TEXT_VALS.EMPTY_REVIEWS
+            expect(OffieButton.getButtonText(mockWifiSentiment)).toEqual(
+                OffieButton.INFO_BUTTON_TEXT_VALS.EMPTY_REVIEWS
             );
         });
 
@@ -43,51 +43,51 @@ describe('<InfoButton />', () => {
 
             // @ts-ignore ignore potentially null reviews property
             mockWifiSentiment.reviews[0].createdAt = new Date(
-                Date.now() - InfoButton.MS_TWO_YEARS
+                Date.now() - OffieButton.MS_TWO_YEARS
             ).toString();
 
-            expect(InfoButton.getButtonText(mockWifiSentiment)).toEqual(
-                InfoButton.INFO_BUTTON_TEXT_VALS.NO_RECENT_REVIEWS
+            expect(OffieButton.getButtonText(mockWifiSentiment)).toEqual(
+                OffieButton.INFO_BUTTON_TEXT_VALS.NO_RECENT_REVIEWS
             );
         });
 
         it('returns a `GOOD_WIFI` text when the reviews sentiment is positive', () => {
             mockWifiSentiment.overallSentiment = sentimentKeys.POSITIVE;
 
-            expect(InfoButton.getButtonText(mockWifiSentiment)).toEqual(
-                InfoButton.INFO_BUTTON_TEXT_VALS.GOOD_WIFI
+            expect(OffieButton.getButtonText(mockWifiSentiment)).toEqual(
+                OffieButton.INFO_BUTTON_TEXT_VALS.GOOD_WIFI
             );
         });
 
         it('returns a `OKAY_WIFI` text when the reviews sentiment is neutral', () => {
             mockWifiSentiment.overallSentiment = sentimentKeys.NEUTRAL;
 
-            expect(InfoButton.getButtonText(mockWifiSentiment)).toEqual(
-                InfoButton.INFO_BUTTON_TEXT_VALS.OKAY_WIFI
+            expect(OffieButton.getButtonText(mockWifiSentiment)).toEqual(
+                OffieButton.INFO_BUTTON_TEXT_VALS.OKAY_WIFI
             );
         });
 
         it('returns a `OKAY_WIFI` text when the reviews sentiment is mixed', () => {
             mockWifiSentiment.overallSentiment = sentimentKeys.MIXED;
 
-            expect(InfoButton.getButtonText(mockWifiSentiment)).toEqual(
-                InfoButton.INFO_BUTTON_TEXT_VALS.OKAY_WIFI
+            expect(OffieButton.getButtonText(mockWifiSentiment)).toEqual(
+                OffieButton.INFO_BUTTON_TEXT_VALS.OKAY_WIFI
             );
         });
 
         it('returns a `POOR_WIFI` text when the reviews sentiment is negative', () => {
             mockWifiSentiment.overallSentiment = sentimentKeys.NEGATIVE;
 
-            expect(InfoButton.getButtonText(mockWifiSentiment)).toEqual(
-                InfoButton.INFO_BUTTON_TEXT_VALS.POOR_WIFI
+            expect(OffieButton.getButtonText(mockWifiSentiment)).toEqual(
+                OffieButton.INFO_BUTTON_TEXT_VALS.POOR_WIFI
             );
         });
 
         it('returns a `UNKNOWN` text when the reviews sentiment is unknown', () => {
             mockWifiSentiment.overallSentiment = null;
 
-            expect(InfoButton.getButtonText(mockWifiSentiment)).toEqual(
-                InfoButton.INFO_BUTTON_TEXT_VALS.UNKNOWN
+            expect(OffieButton.getButtonText(mockWifiSentiment)).toEqual(
+                OffieButton.INFO_BUTTON_TEXT_VALS.UNKNOWN
             );
         });
     });
