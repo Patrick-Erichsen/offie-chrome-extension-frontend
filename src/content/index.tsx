@@ -5,7 +5,7 @@ import Amplify from 'aws-amplify';
 import ReactDOM from 'react-dom';
 import { ThemeProvider } from '@mui/material';
 import { amplifyConfig, theme } from './utils';
-import App from './App';
+import { App } from './App';
 
 Amplify.configure(amplifyConfig);
 
@@ -15,10 +15,10 @@ rootOffieNode.id = 'offie-node-root';
 document.body.appendChild(rootOffieNode);
 
 ReactDOM.render(
-    <ThemeProvider theme={theme}>
-        <StrictMode>
+    <StrictMode>
+        <ThemeProvider theme={theme}>
             <App />
-        </StrictMode>
-    </ThemeProvider>,
+        </ThemeProvider>
+    </StrictMode>,
     rootOffieNode
 );

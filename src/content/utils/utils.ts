@@ -14,7 +14,10 @@ export const sentimentKeys: {
     NEGATIVE: 'Negative',
 };
 
-// eslint-disable-next-line import/prefer-default-export
+export const isError = (err: unknown | Error): err is Error => {
+    return (err as Error).message !== undefined;
+};
+
 export const sortReviewsByDateDesc = (
     reviews: NonNullable<WifiSentiment['reviews']>
 ): NonNullable<WifiSentiment['reviews']> => {

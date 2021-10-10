@@ -1,32 +1,47 @@
 import { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom';
-import OffieInfo from './components/OffieInfo';
+import { OffieButton } from './components/OffieButton';
 import { getAllListingIds, getOffieNode } from './utils';
-import { ListingsDetailsRes } from '../types/Offie';
 import * as api from './api';
-import { ChromeUrlUpdate } from '../types/Chrome';
+import { ListingsDetailsRes } from '../types/Offie';
+import { useUrlChrome } from './hooks/useUrlChrome';
 
-const App = (): JSX.Element | null => {
-    const [location, setLocation] = useState<string>(window.location.href);
-    const [listingsRes, setListingsRes] = useState<ListingsDetailsRes | null>(
-        null
-    );
+type ListingDetailsObj = ListingsDetailsRes['listingsDetails'];
 
-    useEffect(() => {
-        const updateLocationOnUrlChange = (request: ChromeUrlUpdate) => {
-            // Clear state before setting new location that will trigger
-            // a `useEffect` invokation
-            setListingsRes(null);
+export const getNewListingDetails = async (
+    cachedListings: ListingDetailsObj | null,
+    newListingIds: string[]
+): Promise<ListingDetailsObj | null> => {
+    let listingIdsToFetch = newListingIds;
 
-            setLocation(request.url);
-        };
+    if (cachedListings) {
+        const cachedListingIds = Object.keys(cachedListings);
+        listingIdsToFetch = newListingIds.filter(
+            (newId) => !cachedListingIds.includes(newId)
+        );
+    }
 
-        chrome.runtime.onMessage.addListener(updateLocationOnUrlChange);
+    if (listingIdsToFetch.length > 0) {
+        const res = await api.getListingsDetails(listingIdsToFetch);
 
-        return () => {
-            chrome.runtime.onMessage.removeListener(updateLocationOnUrlChange);
-        };
-    }, []);
+        if (res) {
+            return res.listingsDetails;
+        }
+    }
+
+    return null;
+};
+
+export const App = (): JSX.Element | null => {
+    const [url, setUrl] = useState<string>(window.location.href);
+    const [curListingIds, setCurListingIds] = useState<string[] | null>(null);
+    const [listingDetails, setListingDetails] =
+        useState<ListingDetailsObj | null>(null);
+
+    useUrlChrome((newUrl) => {
+        setCurListingIds(null);
+        setUrl(newUrl);
+    });
 
     useEffect(() => {
         const interval = setInterval(async () => {
@@ -38,47 +53,59 @@ const App = (): JSX.Element | null => {
                 // Need to clear interval before the async function
                 clearInterval(interval);
 
-                const listingIds = getAllListingIds(listings);
+                const newListingIds = getAllListingIds(listings);
 
-                const newListingsRes = await api.getListingsDetails(listingIds);
-
-                setListingsRes(newListingsRes);
+                setCurListingIds(newListingIds);
             }
         }, 100);
 
         return () => {
             clearInterval(interval);
         };
-    }, [location]);
+    }, [listingDetails, url]);
 
-    if (!listingsRes) {
+    useEffect(() => {
+        const getNonCachedListings = async (newListingIds: string[]) => {
+            const newListingDetails = await getNewListingDetails(
+                listingDetails,
+                newListingIds
+            );
+
+            if (newListingDetails) {
+                setListingDetails((oldListingDetails) => {
+                    return {
+                        ...oldListingDetails,
+                        ...newListingDetails,
+                    };
+                });
+            }
+        };
+
+        if (curListingIds) {
+            getNonCachedListings(curListingIds);
+        }
+    }, [curListingIds, listingDetails]);
+
+    if (!listingDetails || !curListingIds) {
         return null;
     }
 
-    const listingIds = Object.keys(listingsRes.listingsDetails);
-
-    const offiePortals = listingIds.map((listingId) => {
+    const offiePortals = curListingIds.map((listingId) => {
         const offieNode = getOffieNode(listingId);
 
         if (!offieNode) {
             return null;
         }
 
-        if (!listingsRes.listingsDetails[listingId]) {
-            console.log(listingsRes.listingsDetails[listingId]);
-            console.log(listingId);
-            console.log(listingsRes);
+        if (!listingDetails[listingId]) {
+            return null;
         }
 
         return ReactDOM.createPortal(
-            <OffieInfo
-                listingDetails={listingsRes.listingsDetails[listingId]}
-            />,
+            <OffieButton listingDetails={listingDetails[listingId]} />,
             offieNode
         );
     });
 
     return <>{...offiePortals}</>;
 };
-
-export default App;
