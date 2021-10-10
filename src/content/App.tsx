@@ -1,27 +1,12 @@
 import { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import OffieInfo from './components/OffieInfo';
-import { getAllListingIds, getOffieNode, isError } from './utils';
+import { getAllListingIds, getOffieNode } from './utils';
 import * as api from './api';
 import { ListingsDetailsRes } from '../types/Offie';
 import { useUrlChrome } from './hooks/useUrlChrome';
 
 type ListingDetailsObj = ListingsDetailsRes['listingsDetails'];
-
-// export const tryCreateOffieNodes = (listingIds: string[]): boolean => {
-//     try {
-//         createOffieNodes(listingIds);
-//         return true;
-//     } catch (err) {
-//         if (isError(err)) {
-//             console.error(
-//                 `Failed to create Offie nodes with err: ${err.message}`
-//             );
-//         }
-
-//         return false;
-//     }
-// };
 
 export const getNewListingDetails = async (
     cachedListings: ListingDetailsObj | null,
