@@ -25,6 +25,8 @@ export const getNewListingDetails = async (
         listingIdsToFetch = newListingIds.filter(
             (newId) => !cachedListingIds.includes(newId)
         );
+
+        console.log(`num cached listings: ${cachedListingIds.length}`);
     }
 
     if (listingIdsToFetch.length > 0) {
@@ -45,6 +47,8 @@ export const OffiePortals = ({
 
     const [listingsDetails, setListingsDetails] =
         useState<ListingDetailsObj | null>(null);
+
+    console.log(`num listings in view: ${viewedListingIds.length}`);
 
     useEffect(() => {
         const getListingsRes = async () => {

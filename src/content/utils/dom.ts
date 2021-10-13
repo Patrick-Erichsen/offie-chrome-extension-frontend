@@ -172,7 +172,7 @@ export const insertOffieNode = (listingId: string): void => {
 };
 
 export const createOffieNodes = (listingIds: string[]): void => {
-    listingIds.forEach((listingId) => {
+    listingIds.forEach(async (listingId) => {
         const existingOffieNode = getOffieNode(listingId);
 
         if (existingOffieNode) {
@@ -180,5 +180,60 @@ export const createOffieNodes = (listingIds: string[]): void => {
         }
 
         insertOffieNode(listingId);
+    });
+};
+
+export const waitForListingsLoad = async (): Promise<void> => {
+    let curWaitMs = 250;
+
+    const waitIntervalMs = 250;
+    const maxWaitMs = 5000;
+
+    return new Promise((resolve, reject) => {
+        const interval = setInterval(async () => {
+            const listings = document.querySelectorAll(
+                'div[itemprop=itemListElement]'
+            );
+
+            if (listings.length > 0) {
+                clearInterval(interval);
+                resolve();
+            } else if (curWaitMs <= maxWaitMs) {
+                curWaitMs += waitIntervalMs;
+            } else {
+                reject(
+                    new Error(
+                        `Failed to wait for listings to load in ${maxWaitMs}ms`
+                    )
+                );
+            }
+        }, waitIntervalMs);
+    });
+};
+
+export const waitForMapLoad = async (): Promise<void> => {
+    let curWaitMs = 250;
+
+    const waitIntervalMs = 250;
+    const maxWaitMs = 5000;
+
+    return new Promise((resolve, reject) => {
+        const interval = setInterval(async () => {
+            const mapContainer = document.querySelector(
+                'div[data-veloute="map/GoogleMap"]'
+            );
+
+            if (mapContainer && mapContainer.childElementCount > 1) {
+                console.log('resolving!!');
+                clearInterval(interval);
+                resolve();
+            } else if (curWaitMs <= maxWaitMs) {
+                curWaitMs += waitIntervalMs;
+            } else {
+                reject(
+                    new Error(`Failed to detect map load in ${maxWaitMs}ms`)
+                );
+            }
+        }, waitIntervalMs);
     });
 };
