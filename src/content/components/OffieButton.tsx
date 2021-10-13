@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { Button, ButtonProps } from '@mui/material';
-import { NetworkCheck as NetworkCheckIcon } from '@mui/icons-material';
+import { Wifi as WifiIcon } from '@mui/icons-material';
 import { ListingDetails, ReviewWithSentiment } from '../../types/Offie';
 import { sortReviewsByDateDesc, sentimentKeys } from '../utils';
 import { InfoPopover } from './InfoPopover';
@@ -137,7 +137,7 @@ export const OffieButton = ({
                     outline: 0,
                     color: 'rgb(34, 34, 34)',
                 }}
-                startIcon={<NetworkCheckIcon />}
+                startIcon={<WifiIcon />}
             >
                 {getButtonText(listingDetails.wifiSentiment)}
             </Button>
