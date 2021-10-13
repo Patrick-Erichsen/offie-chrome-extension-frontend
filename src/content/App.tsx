@@ -1,14 +1,29 @@
 import { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom';
-import { OffieButton } from './components/OffieButton';
-import { getAllListingIds, getOffieNode } from './utils';
-import * as api from './api';
-import { ListingsDetailsRes } from '../types/Offie';
+
+import {
+    createOffieNodes,
+    getAllListingIds,
+    waitForAirbnbSearchPageLoad,
+    getOffieNode,
+} from './utils';
 import { useUrlChrome } from './hooks/useUrlChrome';
+import { ListingDetailsObj } from '../types/Offie';
+import * as api from './api';
+import { OffieButton } from './components/OffieButton';
 
-type ListingDetailsObj = ListingsDetailsRes['listingsDetails'];
+/**
+ * Number of listings that we load at a time.
+ */
+export const INC_NUM_VIEWED_LISTINGS = 4;
 
-export const getNewListingDetails = async (
+/**
+ * Fetch the listings details for an array of listing IDs.
+ *
+ * The array of new listing IDs is filtered to remove any
+ * ID that is present in the `cachedListings` object.
+ */
+export const getNewListingsDetails = async (
     cachedListings: ListingDetailsObj | null,
     newListingIds: string[]
 ): Promise<ListingDetailsObj | null> => {
@@ -16,6 +31,7 @@ export const getNewListingDetails = async (
 
     if (cachedListings) {
         const cachedListingIds = Object.keys(cachedListings);
+
         listingIdsToFetch = newListingIds.filter(
             (newId) => !cachedListingIds.includes(newId)
         );
@@ -34,78 +50,88 @@ export const getNewListingDetails = async (
 
 export const App = (): JSX.Element | null => {
     const [url, setUrl] = useState<string>(window.location.href);
-    const [curListingIds, setCurListingIds] = useState<string[] | null>(null);
-    const [listingDetails, setListingDetails] =
+    const [listingIds, setListingIds] = useState<string[] | null>(null);
+    const [viewedListingIds, setViewedListingIds] = useState<string[]>([]);
+    const [listingsDetails, setListingsDetails] =
         useState<ListingDetailsObj | null>(null);
 
-    useUrlChrome((newUrl) => {
-        setCurListingIds(null);
-        setUrl(newUrl);
+    useUrlChrome((url) => {
+        setListingIds(null);
+        setViewedListingIds([]);
+        setUrl(url);
     });
 
     useEffect(() => {
-        const interval = setInterval(async () => {
-            const listings = document.querySelectorAll(
-                'div[itemprop=itemListElement]'
-            );
+        (async () => {
+            await waitForAirbnbSearchPageLoad();
 
-            if (listings.length > 0) {
-                // Need to clear interval before the async function
-                clearInterval(interval);
+            const newListingIds = getAllListingIds();
 
-                const newListingIds = getAllListingIds(listings);
-
-                setCurListingIds(newListingIds);
+            if (newListingIds) {
+                createOffieNodes(newListingIds);
+                setListingIds(newListingIds);
             }
-        }, 100);
-
-        return () => {
-            clearInterval(interval);
-        };
-    }, [listingDetails, url]);
+        })();
+    }, [url]);
 
     useEffect(() => {
-        const getNonCachedListings = async (newListingIds: string[]) => {
-            const newListingDetails = await getNewListingDetails(
-                listingDetails,
-                newListingIds
+        (async () => {
+            const newListingDetails = await getNewListingsDetails(
+                listingsDetails,
+                viewedListingIds
             );
 
             if (newListingDetails) {
-                setListingDetails((oldListingDetails) => {
-                    return {
-                        ...oldListingDetails,
-                        ...newListingDetails,
-                    };
+                setListingsDetails((oldListingDetails) => {
+                    return { ...oldListingDetails, ...newListingDetails };
                 });
             }
-        };
+        })();
+    }, [listingsDetails, viewedListingIds]);
 
-        if (curListingIds) {
-            getNonCachedListings(curListingIds);
-        }
-    }, [curListingIds, listingDetails]);
-
-    if (!listingDetails || !curListingIds) {
+    if (!listingIds) {
         return null;
     }
 
-    const offiePortals = curListingIds.map((listingId) => {
+    const portals = listingIds.map((listingId, index) => {
         const offieNode = getOffieNode(listingId);
 
         if (!offieNode) {
             return null;
         }
 
-        if (!listingDetails[listingId]) {
-            return null;
-        }
+        /**
+         * If a listing comes into view and has an index greater
+         * than the current number of viewed listings, this indicates
+         * that the listing details for the next block of
+         * `INC_NUM_VIEWED_LISTINGS` listings needs to be fetched.
+         *
+         * Setting the `viewedListingIds` state var will trigger this.
+         */
+        const onInView = () => {
+            const numViewedListings = viewedListingIds.length;
+
+            if (index >= numViewedListings) {
+                setViewedListingIds(
+                    listingIds.slice(
+                        0,
+                        numViewedListings + INC_NUM_VIEWED_LISTINGS
+                    )
+                );
+            }
+        };
 
         return ReactDOM.createPortal(
-            <OffieButton listingDetails={listingDetails[listingId]} />,
+            <OffieButton
+                key={listingId}
+                onInView={onInView}
+                listingDetails={
+                    listingsDetails ? listingsDetails[listingId] : null
+                }
+            />,
             offieNode
         );
     });
 
-    return <>{...offiePortals}</>;
+    return <>{...portals}</>;
 };

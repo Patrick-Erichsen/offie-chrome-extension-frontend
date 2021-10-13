@@ -1,16 +1,14 @@
-import { useState } from 'react';
-import { Button } from '@mui/material';
+import { useEffect, useState } from 'react';
+import { useInView } from 'react-intersection-observer';
+import { Button, ButtonProps } from '@mui/material';
 import { Wifi as WifiIcon } from '@mui/icons-material';
-import {
-    ListingDetails,
-    ReviewWithSentiment,
-    WifiSentiment,
-} from '../../types/Offie';
+import { ListingDetails, ReviewWithSentiment } from '../../types/Offie';
 import { sortReviewsByDateDesc, sentimentKeys } from '../utils';
 import { InfoPopover } from './InfoPopover';
 
-export interface OffieButtonProps {
-    listingDetails: ListingDetails;
+export interface OffieButtonProps extends ButtonProps {
+    onInView: () => void;
+    listingDetails: ListingDetails | null;
 }
 
 export type OffieButtonKeys =
@@ -48,7 +46,9 @@ export const hasRecentWifiReviews = (
     );
 };
 
-export const getButtonText = (wifiSentiment: WifiSentiment): string => {
+export const getButtonText = (
+    wifiSentiment: ListingDetails['wifiSentiment']
+): string => {
     if (!wifiSentiment.reviews) {
         return INFO_BUTTON_TEXT_VALS.UNKNOWN;
     }
@@ -83,10 +83,14 @@ export const getButtonText = (wifiSentiment: WifiSentiment): string => {
 
 export const OffieButton = ({
     listingDetails,
+    onInView,
 }: OffieButtonProps): JSX.Element => {
-    const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
+    const { ref, inView } = useInView({
+        rootMargin: '100% 0%',
+        triggerOnce: true,
+    });
 
-    const buttonText = getButtonText(listingDetails.wifiSentiment);
+    const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
 
     const handleClick = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorEl(anchorEl ? null : event.currentTarget);
@@ -96,6 +100,16 @@ export const OffieButton = ({
         setAnchorEl(null);
     };
 
+    useEffect(() => {
+        if (inView) {
+            onInView();
+        }
+    }, [inView, onInView]);
+
+    if (!listingDetails) {
+        return <div ref={ref} />;
+    }
+
     return (
         <>
             <InfoPopover
@@ -104,6 +118,7 @@ export const OffieButton = ({
                 anchorEl={anchorEl}
             />
             <Button
+                ref={ref}
                 color="inherit"
                 variant="outlined"
                 onClick={handleClick}
@@ -124,7 +139,7 @@ export const OffieButton = ({
                 }}
                 startIcon={<WifiIcon />}
             >
-                {buttonText}
+                {getButtonText(listingDetails.wifiSentiment)}
             </Button>
         </>
     );

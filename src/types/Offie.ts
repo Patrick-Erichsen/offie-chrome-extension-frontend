@@ -1,9 +1,11 @@
 import type { SentimentScore } from '@aws-sdk/client-comprehend';
 
+export type ListingDetailsObj = {
+    [listingId: string]: ListingDetails;
+};
+
 export interface ListingsDetailsRes {
-    listingsDetails: {
-        [listingId: string]: ListingDetails;
-    };
+    listingsDetails: ListingDetailsObj;
 }
 
 export type WifiKeywords = 'wifi' | 'wi-fi' | 'internet';

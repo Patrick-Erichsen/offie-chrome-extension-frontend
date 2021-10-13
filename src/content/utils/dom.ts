@@ -1,6 +1,6 @@
 import Url from 'url-parse';
 
-export const OFFIE_NODE_ID_PREFIX = 'offie-node-';
+export const OFFIE_NODE_ID_PREFIX = 'offie-node';
 
 const NUM_ROWS_WITH_BADGE = 6;
 const NUM_ROWS_WITH_BUILDING_INFO = 5;
@@ -28,7 +28,13 @@ export const getListingId = (listing: Element): string | null => {
     return listingId;
 };
 
-export const getAllListingIds = (listings: NodeListOf<Element>): string[] => {
+export const getAllListingIds = (): string[] | null => {
+    const listings = document.querySelectorAll('div[itemprop=itemListElement]');
+
+    if (listings.length === 0) {
+        return null;
+    }
+
     return Array.from(listings).reduce((acc, listing) => {
         const listingId = getListingId(listing);
 
@@ -88,32 +94,28 @@ export const getListingDetailsElem = (listingId: string): Element | null => {
 export const insertNewDetailsRow = (
     listingsDetails: HTMLElement,
     offieNode: HTMLElement
-): boolean => {
+): void => {
     const lastRow =
         listingsDetails.children[listingsDetails.childElementCount - 1];
 
     // eslint-disable-next-line no-param-reassign
-    offieNode.style.marginTop = '12px';
+    offieNode.style.paddingTop = '12px';
 
     listingsDetails.insertBefore(offieNode, lastRow);
-
-    return true;
 };
 
 export const insertBeforeBadge = (
     listingDetails: HTMLElement,
     offieNode: HTMLElement
-): boolean => {
+): void => {
     const badgeContainer = listingDetails.children[
         listingDetails.childElementCount - 2
     ] as HTMLElement;
 
     if (!badgeContainer) {
-        console.error(
+        throw new Error(
             `Failed to find the 'badgeContainer' var in ${insertBeforeBadge.name}`
         );
-
-        return false;
     }
 
     const numChildrenBadge = badgeContainer.childElementCount;
@@ -132,50 +134,110 @@ export const insertBeforeBadge = (
     displayBadge.style.setProperty('position', 'inherit', 'important');
 
     badgeContainer.insertBefore(offieNode, displayBadge);
-
-    return true;
 };
 
-export const insertOffieNode = (
-    listingId: string,
-    offieNode: HTMLElement
-): boolean => {
-    const listingDetails = getListingDetailsElem(listingId) as HTMLElement;
-
-    if (!listingDetails) {
-        return false;
-    }
-
-    switch (listingDetails.childElementCount) {
-        case NUM_ROWS_WITH_BADGE:
-            return insertBeforeBadge(listingDetails, offieNode);
-        case NUM_ROWS_WITH_BUILDING_INFO || NUM_ROWS_WITHOUT_BUILDING_INFO:
-            return insertNewDetailsRow(listingDetails, offieNode);
-        default:
-            return false;
-    }
+const getOffieNodeId = (listingId: string) => {
+    return `${OFFIE_NODE_ID_PREFIX}-${listingId}`;
 };
 
 export const getOffieNode = (listingId: string): Element | null => {
-    const offieNodeId = `${OFFIE_NODE_ID_PREFIX}${listingId}`;
+    const offieNodeId = getOffieNodeId(listingId);
+    return document.getElementById(offieNodeId);
+};
 
-    const existingOffieNode = document.querySelector(`div[id*=${offieNodeId}]`);
+export const insertOffieNode = (listingId: string): void => {
+    const listingDetails = getListingDetailsElem(listingId) as HTMLElement;
 
-    // Avoid re-rendering into the DOM if the node already exists.
-    // This shouldn't happen, but is possible due to how React
-    // schedules renders / commits
-    if (existingOffieNode) {
-        return existingOffieNode;
+    if (!listingDetails) {
+        throw new Error(
+            `Failed to find listing details element for listing: ${listingId}`
+        );
     }
 
     const offieNode = document.createElement('div');
-    offieNode.id = offieNodeId;
+    offieNode.id = getOffieNodeId(listingId);
 
-    const insertionOpRes = insertOffieNode(listingId, offieNode);
-
-    if (!insertionOpRes) {
-        return null;
+    switch (listingDetails.childElementCount) {
+        case NUM_ROWS_WITH_BADGE:
+            insertBeforeBadge(listingDetails, offieNode);
+            break;
+        case NUM_ROWS_WITH_BUILDING_INFO || NUM_ROWS_WITHOUT_BUILDING_INFO:
+            insertNewDetailsRow(listingDetails, offieNode);
+            break;
+        default:
+            throw new Error(
+                `Failed to find expected number of rows for listing: ${listingId}`
+            );
     }
+};
 
-    return offieNode;
+export const createOffieNodes = (listingIds: string[]): void => {
+    listingIds.forEach(async (listingId) => {
+        const existingOffieNode = getOffieNode(listingId);
+
+        if (existingOffieNode) {
+            return;
+        }
+
+        insertOffieNode(listingId);
+    });
+};
+
+export const waitForListingsLoad = async (): Promise<void> => {
+    let curWaitMs = 250;
+
+    const waitIntervalMs = 250;
+    const maxWaitMs = 5000;
+
+    return new Promise((resolve, reject) => {
+        const interval = setInterval(async () => {
+            const listings = document.querySelectorAll(
+                'div[itemprop=itemListElement]'
+            );
+
+            if (listings.length > 0) {
+                clearInterval(interval);
+                resolve();
+            } else if (curWaitMs <= maxWaitMs) {
+                curWaitMs += waitIntervalMs;
+            } else {
+                reject(
+                    new Error(
+                        `Failed to wait for listings to load in ${maxWaitMs}ms`
+                    )
+                );
+            }
+        }, waitIntervalMs);
+    });
+};
+
+export const waitForMapLoad = async (): Promise<void> => {
+    let curWaitMs = 250;
+
+    const waitIntervalMs = 250;
+    const maxWaitMs = 5000;
+
+    return new Promise((resolve, reject) => {
+        const interval = setInterval(async () => {
+            const mapContainer = document.querySelector(
+                'div[data-veloute="map/GoogleMap"]'
+            );
+
+            if (mapContainer && mapContainer.childElementCount > 1) {
+                clearInterval(interval);
+                resolve();
+            } else if (curWaitMs <= maxWaitMs) {
+                curWaitMs += waitIntervalMs;
+            } else {
+                reject(
+                    new Error(`Failed to detect map load in ${maxWaitMs}ms`)
+                );
+            }
+        }, waitIntervalMs);
+    });
+};
+
+export const waitForAirbnbSearchPageLoad = async (): Promise<void> => {
+    await waitForMapLoad();
+    await waitForListingsLoad();
 };

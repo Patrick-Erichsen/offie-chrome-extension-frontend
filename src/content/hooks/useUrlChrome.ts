@@ -3,7 +3,7 @@ import { ChromeUrlUpdate } from '../../types/Chrome';
 
 /**
  * Invoke the `onUrlChange` param when Chrome detects that
- * the
+ * the URL has changed
  */
 export const useUrlChrome = (onUrlChange: (url: string) => void): void => {
     useEffect(() => {
