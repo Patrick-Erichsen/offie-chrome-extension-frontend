@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Button } from '@mui/material';
-import { NetworkCheck as NetworkCheckIcon } from '@mui/icons-material';
+import { Wifi as WifiIcon } from '@mui/icons-material';
 import {
     ListingDetails,
     ReviewWithSentiment,
@@ -122,7 +122,7 @@ export const OffieButton = ({
                     outline: 0,
                     color: 'rgb(34, 34, 34)',
                 }}
-                startIcon={<NetworkCheckIcon />}
+                startIcon={<WifiIcon />}
             >
                 {buttonText}
             </Button>
