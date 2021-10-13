@@ -136,10 +136,16 @@ export const insertBeforeBadge = (
     badgeContainer.insertBefore(offieNode, displayBadge);
 };
 
-export const insertOffieNode = (
-    listingId: string,
-    offieNode: HTMLElement
-): void => {
+const getOffieNodeId = (listingId: string) => {
+    return `${OFFIE_NODE_ID_PREFIX}-${listingId}`;
+};
+
+export const getOffieNode = (listingId: string): Element | null => {
+    const offieNodeId = getOffieNodeId(listingId);
+    return document.getElementById(offieNodeId);
+};
+
+export const insertOffieNode = (listingId: string): void => {
     const listingDetails = getListingDetailsElem(listingId) as HTMLElement;
 
     if (!listingDetails) {
@@ -147,6 +153,9 @@ export const insertOffieNode = (
             `Failed to find listing details element for listing: ${listingId}`
         );
     }
+
+    const offieNode = document.createElement('div');
+    offieNode.id = getOffieNodeId(listingId);
 
     switch (listingDetails.childElementCount) {
         case NUM_ROWS_WITH_BADGE:
@@ -162,15 +171,6 @@ export const insertOffieNode = (
     }
 };
 
-const getOffieNodeId = (listingId: string) => {
-    return `${OFFIE_NODE_ID_PREFIX}-${listingId}`;
-};
-
-export const getOffieNode = (listingId: string): Element | null => {
-    const offieNodeId = getOffieNodeId(listingId);
-    return document.getElementById(offieNodeId);
-};
-
 export const createOffieNodes = (listingIds: string[]): void => {
     listingIds.forEach((listingId) => {
         const existingOffieNode = getOffieNode(listingId);
@@ -179,9 +179,6 @@ export const createOffieNodes = (listingIds: string[]): void => {
             return;
         }
 
-        const offieNode = document.createElement('div');
-        offieNode.id = getOffieNodeId(listingId);
-
-        insertOffieNode(listingId, offieNode);
+        insertOffieNode(listingId);
     });
 };
