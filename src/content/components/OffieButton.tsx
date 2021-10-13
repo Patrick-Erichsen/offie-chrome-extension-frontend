@@ -86,7 +86,7 @@ export const OffieButton = ({
     onInView,
 }: OffieButtonProps): JSX.Element => {
     const { ref, inView } = useInView({
-        rootMargin: '50% 0%',
+        rootMargin: '100% 0%',
         triggerOnce: true,
     });
 

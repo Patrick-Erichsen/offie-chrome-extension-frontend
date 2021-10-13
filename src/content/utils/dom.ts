@@ -99,7 +99,7 @@ export const insertNewDetailsRow = (
         listingsDetails.children[listingsDetails.childElementCount - 1];
 
     // eslint-disable-next-line no-param-reassign
-    offieNode.style.marginTop = '12px';
+    offieNode.style.paddingTop = '12px';
 
     listingsDetails.insertBefore(offieNode, lastRow);
 };
@@ -224,7 +224,6 @@ export const waitForMapLoad = async (): Promise<void> => {
             );
 
             if (mapContainer && mapContainer.childElementCount > 1) {
-                console.log('resolving!!');
                 clearInterval(interval);
                 resolve();
             } else if (curWaitMs <= maxWaitMs) {
@@ -236,4 +235,9 @@ export const waitForMapLoad = async (): Promise<void> => {
             }
         }, waitIntervalMs);
     });
+};
+
+export const waitForAirbnbSearchPageLoad = async (): Promise<void> => {
+    await waitForMapLoad();
+    await waitForListingsLoad();
 };
