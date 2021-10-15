@@ -5,6 +5,7 @@ import {
     getAllListingIds,
     waitForAirbnbSearchPageLoad,
     getOffieNode,
+    logUrlChange,
 } from './utils';
 import { useUrlChrome } from './hooks/useUrlChrome';
 import { ListingDetailsObj } from '../types/Offie';
