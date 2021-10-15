@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom';
-
 import {
     createOffieNodes,
     getAllListingIds,
     waitForAirbnbSearchPageLoad,
     getOffieNode,
+    logUrlChange,
 } from './utils';
 import { useUrlChrome } from './hooks/useUrlChrome';
 import { ListingDetailsObj } from '../types/Offie';
@@ -55,10 +55,12 @@ export const App = (): JSX.Element | null => {
     const [listingsDetails, setListingsDetails] =
         useState<ListingDetailsObj | null>(null);
 
-    useUrlChrome((url) => {
+    useUrlChrome((newUrl) => {
         setListingIds(null);
         setViewedListingIds([]);
-        setUrl(url);
+        setUrl(newUrl);
+
+        logUrlChange(newUrl);
     });
 
     useEffect(() => {
