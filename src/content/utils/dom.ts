@@ -175,11 +175,9 @@ export const createOffieNodes = (listingIds: string[]): void => {
     listingIds.forEach(async (listingId) => {
         const existingOffieNode = getOffieNode(listingId);
 
-        if (existingOffieNode) {
-            return;
+        if (!existingOffieNode) {
+            insertOffieNode(listingId);
         }
-
-        insertOffieNode(listingId);
     });
 };
 

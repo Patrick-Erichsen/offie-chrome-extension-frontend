@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom';
-
 import {
     createOffieNodes,
     getAllListingIds,
@@ -55,10 +54,12 @@ export const App = (): JSX.Element | null => {
     const [listingsDetails, setListingsDetails] =
         useState<ListingDetailsObj | null>(null);
 
-    useUrlChrome((url) => {
+    useUrlChrome((newUrl) => {
         setListingIds(null);
         setViewedListingIds([]);
-        setUrl(url);
+        setUrl(newUrl);
+
+        logUrlChange(newUrl);
     });
 
     useEffect(() => {
