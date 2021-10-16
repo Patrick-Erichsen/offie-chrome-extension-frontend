@@ -1,8 +1,17 @@
 import type { SentimentScore } from '@aws-sdk/client-comprehend';
 
-export type ListingDetailsObj = {
+export type SentimenyKeysKeys = 'POSITIVE' | 'MIXED' | 'NEUTRAL' | 'NEGATIVE';
+
+export interface OffieApiRes<T> {
+    error: {
+        message: string;
+    };
+    data: T;
+}
+
+export interface ListingDetailsObj {
     [listingId: string]: ListingDetails;
-};
+}
 
 export interface ListingsDetailsRes {
     listingsDetails: ListingDetailsObj;

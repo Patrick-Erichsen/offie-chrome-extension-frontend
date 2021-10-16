@@ -49,7 +49,7 @@ export const getNewListingsDetails = async (
 };
 
 export const App = (): JSX.Element | null => {
-    const [url, setUrl] = useState<string>(window.location.href);
+    const [url, setUrl] = useState<string>('');
     const [listingIds, setListingIds] = useState<string[] | null>(null);
     const [viewedListingIds, setViewedListingIds] = useState<string[]>([]);
     const [listingsDetails, setListingsDetails] =
@@ -62,6 +62,11 @@ export const App = (): JSX.Element | null => {
 
         logUrlChange(newUrl);
     });
+
+    // Log initial URL
+    useEffect(() => {
+        logUrlChange(window.location.href);
+    }, []);
 
     useEffect(() => {
         (async () => {

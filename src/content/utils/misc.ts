@@ -1,9 +1,7 @@
 import type { SentimentScore } from '@aws-sdk/client-comprehend';
-import { WifiSentiment } from '../../types/Offie';
+import { SentimenyKeysKeys, WifiSentiment } from '../../types/Offie';
 
 export const WIFI_AMENITY_ID = 4;
-
-export type SentimenyKeysKeys = 'POSITIVE' | 'MIXED' | 'NEUTRAL' | 'NEGATIVE';
 
 export const sentimentKeys: {
     [key in SentimenyKeysKeys]: keyof SentimentScore;
@@ -25,5 +23,3 @@ export const sortReviewsByDateDesc = (
         .sort((a, b) => Date.parse(a.createdAt) - Date.parse(b.createdAt))
         .reverse();
 };
-
-export const logUrlChange = (url: string): void => {};
