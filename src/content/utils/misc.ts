@@ -23,3 +23,5 @@ export const sortReviewsByDateDesc = (
         .sort((a, b) => Date.parse(a.createdAt) - Date.parse(b.createdAt))
         .reverse();
 };
+
+export const logUrlChange = (url: string): void => {};
