@@ -5,9 +5,9 @@ import {
     getAllListingIds,
     waitForAirbnbSearchPageLoad,
     getOffieNode,
-    logUrlChange,
+    hasWifiOrWorkspaceFilter,
 } from './utils';
-import { useUrlChrome } from './hooks/useUrlChrome';
+import { useUrlChangeChrome } from './hooks/useUrlChangeChrome';
 import { ListingDetailsObj } from '../types/Offie';
 import * as api from './api';
 import { OffieButton } from './components/OffieButton';
@@ -49,27 +49,29 @@ export const getNewListingsDetails = async (
 };
 
 export const App = (): JSX.Element | null => {
-    const [url, setUrl] = useState<string>('');
+    const [isVisible, setIsVisible] = useState<boolean>(false);
     const [listingIds, setListingIds] = useState<string[] | null>(null);
     const [viewedListingIds, setViewedListingIds] = useState<string[]>([]);
     const [listingsDetails, setListingsDetails] =
         useState<ListingDetailsObj | null>(null);
 
-    useUrlChrome((newUrl) => {
+    /**
+     * On a URL change:
+     *   - Set visibility based on whether or not a wifi or workspace filter is active
+     *   - Clear previous state
+     *   - Wait for the page to be fully loaded
+     *   - Insert the DOM nodes that our Portal elements will render into
+     *   - Parse and set the array of listing IDs
+     */
+    useUrlChangeChrome(async (newUrl) => {
+        const newIsVisible = hasWifiOrWorkspaceFilter(newUrl);
+
+        setIsVisible(newIsVisible);
+
         setListingIds(null);
         setViewedListingIds([]);
-        setUrl(newUrl);
 
-        logUrlChange(newUrl);
-    });
-
-    // Log initial URL
-    useEffect(() => {
-        logUrlChange(window.location.href);
-    }, []);
-
-    useEffect(() => {
-        (async () => {
+        if (newIsVisible) {
             await waitForAirbnbSearchPageLoad();
 
             const newListingIds = getAllListingIds();
@@ -78,8 +80,8 @@ export const App = (): JSX.Element | null => {
                 createOffieNodes(newListingIds);
                 setListingIds(newListingIds);
             }
-        })();
-    }, [url]);
+        }
+    });
 
     useEffect(() => {
         (async () => {
@@ -96,7 +98,7 @@ export const App = (): JSX.Element | null => {
         })();
     }, [listingsDetails, viewedListingIds]);
 
-    if (!listingIds) {
+    if (!isVisible || !listingIds) {
         return null;
     }
 
