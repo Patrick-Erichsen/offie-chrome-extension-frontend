@@ -1,5 +1,3 @@
-import Url from 'url-parse';
-
 export const OFFIE_NODE_ID_PREFIX = 'offie-node';
 
 const NUM_ROWS_WITH_BADGE = 6;
@@ -13,17 +11,15 @@ export const getListingId = (listing: Element): string | null => {
         return null;
     }
 
-    const content = urlMetaTag.getAttribute('content');
+    const urlWithoutProtocol = urlMetaTag.getAttribute('content');
 
-    if (!content) {
+    if (!urlWithoutProtocol) {
         return null;
     }
 
-    const { pathname } = new Url(content);
-    const paths = pathname.split('/');
+    const { pathname } = new URL(`http://${urlWithoutProtocol}`);
 
-    // Listing ID is the last portion of the pathname
-    const listingId = paths[paths.length - 1];
+    const listingId = pathname.split('/')[2];
 
     return listingId;
 };

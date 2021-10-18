@@ -1,7 +1,7 @@
 export default {
-    preset: 'ts-jest',
     verbose: true,
     moduleFileExtensions: ['js', 'ts', 'tsx'],
+    moduleDirectories: ['node_modules', 'src'],
     transform: {
         '^.+\\.(ts)$': 'ts-jest',
     },

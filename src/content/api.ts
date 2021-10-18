@@ -1,27 +1,32 @@
 /* eslint-disable import/prefer-default-export */
-import { API } from 'aws-amplify';
-import type { ListingsDetailsRes } from '../types/Offie';
+import axios from 'axios';
+import type { ListingsDetailsRes, OffieApiRes } from '../types/Offie';
 
 export const getListingsDetails = async (
     listingsIds: string[]
 ): Promise<ListingsDetailsRes | null> => {
-    const apiName = process.env.API_GATEWAY_NAME;
+    const apiUrl = process.env.API_URL;
 
-    const params = {
-        headers: {},
-        response: true,
-    };
+    if (!apiUrl) {
+        console.error(
+            'Failed to find `API_URL` env var! Aborting API request.'
+        );
 
-    const path = listingsIds.reduce((acc, listingId) => {
+        return null;
+    }
+
+    const urlWithParams = listingsIds.reduce((acc, listingId) => {
         return `${acc}&listingId=${listingId}`;
-    }, '/dev/listingsDetails?');
+    }, `${apiUrl}/dev/listingsDetails?`);
 
     try {
-        const res = await API.get(apiName, path, params);
+        const {
+            data: { data },
+        } = await axios.get<OffieApiRes<ListingsDetailsRes>>(urlWithParams);
 
-        return res.data.data;
+        return data;
     } catch (err) {
-        console.log({ err });
+        console.error({ err });
 
         return null;
     }
