@@ -1,4 +1,5 @@
 import * as qs from 'qs';
+import { rollbar } from './rollbar';
 import { getParsedUrlSearch } from './misc';
 
 export interface AirbnbFilterKeyMap {
@@ -190,7 +191,7 @@ export const getSearchLocation = (
         .map((location) => location.replace('-', ' '));
 
     if (locations.length > 5) {
-        console.error(
+        rollbar.warning(
             `Failed to find expected number of locations in Airbnb location string! Num locations found: ${locations.length}`
         );
 
@@ -283,7 +284,7 @@ export const hasWifiOrWorkspaceFilter = (urlStr: string): boolean => {
     // We expect the amenities URL param to be an array type, so log an error
     // if it is not an array
     if (!Array.isArray(amenities)) {
-        console.error(
+        rollbar.warning(
             `Expected the amenities key to an array, but found: ${typeof amenities}`
         );
 
