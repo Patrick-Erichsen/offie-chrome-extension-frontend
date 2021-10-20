@@ -232,6 +232,8 @@ export const waitForMapLoad = async (): Promise<void> => {
 };
 
 export const waitForAirbnbSearchPageLoad = async (): Promise<void> => {
+    console.log('about to throw error');
+    throw new Error('test error!!');
     await waitForMapLoad();
     await waitForListingsLoad();
 };
