@@ -10,8 +10,6 @@ import { logUrlChange } from '../utils';
  * If the `runOnInit` param is not explicitly set to false,
  * the `onUrlChange` param is invoked on the initial render
  * with the value of `window.location.href`.
- *
- * Note: All URL changes are logged.
  */
 export const useUrlChangeChrome = (
     onUrlChange: (url: string) => void,
@@ -28,7 +26,6 @@ export const useUrlChangeChrome = (
         chrome.runtime.onMessage.addListener(onUrlChangeWrapper);
 
         if (runOnInit) {
-            logUrlChange(window.location.href);
             onUrlChange(window.location.href);
         }
 

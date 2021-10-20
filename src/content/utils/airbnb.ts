@@ -299,3 +299,9 @@ export const hasWifiOrWorkspaceFilter = (urlStr: string): boolean => {
 
     return hasWifiFilter || hasDedicatedWorkspaceFilter;
 };
+
+export const isHomesSearchPage = (url: string): boolean => {
+    const { pathname } = new URL(url);
+
+    return pathname.includes('/homes');
+};
