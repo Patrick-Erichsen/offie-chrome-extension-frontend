@@ -1,14 +1,15 @@
-import { useEffect, useState } from 'react';
-import { useInView } from 'react-intersection-observer';
+import { useState } from 'react';
 import { Button, ButtonProps } from '@mui/material';
 import { Wifi as WifiIcon } from '@mui/icons-material';
 import { ListingDetails, ReviewWithSentiment } from '../../types/Offie';
 import { sortReviewsByDateDesc, sentimentKeys } from '../utils';
+import * as analytics from '../analytics';
 import { InfoPopover } from './InfoPopover';
 
 export interface OffieButtonProps extends ButtonProps {
-    onInView: () => void;
-    listingDetails: ListingDetails | null;
+    listingId: string;
+    listingIndex: number;
+    listingDetails: ListingDetails;
 }
 
 export type OffieButtonKeys =
@@ -83,32 +84,29 @@ export const getButtonText = (
 
 export const OffieButton = ({
     listingDetails,
-    onInView,
+    listingIndex,
+    listingId,
 }: OffieButtonProps): JSX.Element => {
-    const { ref, inView } = useInView({
-        rootMargin: '50% 0%',
-        triggerOnce: true,
-    });
-
     const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
 
     const handleClick = (event: React.MouseEvent<HTMLElement>) => {
-        setAnchorEl(anchorEl ? null : event.currentTarget);
+        setAnchorEl(event.currentTarget);
+
+        analytics.logOffieButtonClick(
+            listingIndex,
+            listingId,
+            listingDetails.wifiSentiment
+        );
+
+        // Used to time how long a user interacts with the modal
+        analytics.initModalTimer();
     };
 
     const handleClose = () => {
         setAnchorEl(null);
+
+        analytics.closeModalTimer();
     };
-
-    useEffect(() => {
-        if (inView) {
-            onInView();
-        }
-    }, [inView, onInView]);
-
-    if (!listingDetails) {
-        return <div ref={ref} />;
-    }
 
     return (
         <>
@@ -118,7 +116,6 @@ export const OffieButton = ({
                 anchorEl={anchorEl}
             />
             <Button
-                ref={ref}
                 color="inherit"
                 variant="outlined"
                 onClick={handleClick}

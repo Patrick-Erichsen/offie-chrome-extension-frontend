@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom';
+import { InView, IntersectionObserverProps } from 'react-intersection-observer';
 import {
     createOffieNodes,
     getAllListingIds,
@@ -93,8 +94,17 @@ export const OffiePortals = (): JSX.Element | null => {
         return null;
     }
 
+    /**
+     * Note that the order of the indices here should correspond to the order
+     * that they appear on the search page. This allows us to pass the index
+     * of the array as a proxy for the actual ranking on the page.
+     */
     const portals = listingIds.map((listingId, index) => {
         const offieNode = getOffieNode(listingId);
+
+        const listingDetails = listingsDetails
+            ? listingsDetails[listingId]
+            : null;
 
         if (!offieNode) {
             return null;
@@ -108,7 +118,11 @@ export const OffiePortals = (): JSX.Element | null => {
          *
          * Setting the `viewedListingIds` state var will trigger this.
          */
-        const onInView = () => {
+        const onInView: IntersectionObserverProps['onChange'] = (inView) => {
+            if (!inView) {
+                return;
+            }
+
             const numViewedListings = viewedListingIds.length;
 
             if (index >= numViewedListings) {
@@ -121,16 +135,19 @@ export const OffiePortals = (): JSX.Element | null => {
             }
         };
 
-        return ReactDOM.createPortal(
-            <OffieButton
-                key={listingId}
-                onInView={onInView}
-                listingDetails={
-                    listingsDetails ? listingsDetails[listingId] : null
-                }
-            />,
-            offieNode
+        const portalEl = (
+            <InView triggerOnce onChange={onInView} rootMargin="50% 0%">
+                {listingDetails ? (
+                    <OffieButton
+                        listingId={listingId}
+                        listingDetails={listingDetails}
+                        listingIndex={index}
+                    />
+                ) : null}
+            </InView>
         );
+
+        return ReactDOM.createPortal(portalEl, offieNode);
     });
 
     return <>{...portals}</>;
