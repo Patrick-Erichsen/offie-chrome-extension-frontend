@@ -1,5 +1,6 @@
 /* eslint-disable import/prefer-default-export */
 import axios from 'axios';
+import { rollbar } from './utils';
 import type { ListingsDetailsRes, OffieApiRes } from '../types/Offie';
 
 export const getListingsDetails = async (
@@ -8,7 +9,7 @@ export const getListingsDetails = async (
     const apiUrl = process.env.API_URL;
 
     if (!apiUrl) {
-        console.error(
+        rollbar.error(
             'Failed to find `API_URL` env var! Aborting API request.'
         );
 
@@ -26,7 +27,7 @@ export const getListingsDetails = async (
 
         return data;
     } catch (err) {
-        console.error({ err });
+        rollbar.error({ err });
 
         return null;
     }

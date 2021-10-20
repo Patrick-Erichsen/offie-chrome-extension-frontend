@@ -1,3 +1,5 @@
+import { rollbar } from './rollbar';
+
 export const OFFIE_NODE_ID_PREFIX = 'offie-node';
 
 const NUM_ROWS_WITH_BADGE = 6;
@@ -49,7 +51,7 @@ export const getListingDetailsElem = (listingId: string): Element | null => {
     const listing = document.querySelector(listingSelector);
 
     if (!listing) {
-        console.error(
+        rollbar.error(
             `Failed to find the 'listing' var in ${getListingDetailsElem.name}`
         );
         return null;
@@ -60,7 +62,7 @@ export const getListingDetailsElem = (listingId: string): Element | null => {
     const itemElement = listing.parentNode;
 
     if (!itemElement) {
-        console.error(
+        rollbar.error(
             `Failed to find the 'itemElement' var in ${getListingDetailsElem.name}`
         );
         return null;
@@ -69,7 +71,7 @@ export const getListingDetailsElem = (listingId: string): Element | null => {
     const group = itemElement.querySelector(groupSelector);
 
     if (!group) {
-        console.error(
+        rollbar.error(
             `Failed to find the 'group' var in ${getListingDetailsElem.name}`
         );
         return null;
@@ -78,7 +80,7 @@ export const getListingDetailsElem = (listingId: string): Element | null => {
     const listingDetails = group.children[2];
 
     if (!listingDetails) {
-        console.error(
+        rollbar.error(
             `Failed to find the 'listingDetails' var in ${getListingDetailsElem.name}`
         );
         return null;
@@ -232,8 +234,6 @@ export const waitForMapLoad = async (): Promise<void> => {
 };
 
 export const waitForAirbnbSearchPageLoad = async (): Promise<void> => {
-    console.log('about to throw error');
-    throw new Error('test error!!');
     await waitForMapLoad();
     await waitForListingsLoad();
 };

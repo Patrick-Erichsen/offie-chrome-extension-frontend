@@ -4,15 +4,15 @@ import mixpanel from 'mixpanel-browser';
 import { StrictMode } from 'react';
 import ReactDOM from 'react-dom';
 import { ThemeProvider } from '@mui/material';
-import { theme } from './utils';
+import { theme, rollbar } from './utils';
 import { App } from './App';
 
-const mixpanelApiKey = process.env.MIXPANEL_PROJECT_TOKEN;
+const mixpanelToken = process.env.MIXPANEL_PROJECT_TOKEN;
 
-if (mixpanelApiKey) {
-    mixpanel.init(mixpanelApiKey);
+if (mixpanelToken) {
+    mixpanel.init(mixpanelToken);
 } else {
-    console.error('Failed to find `MIXPANEL_PROJECT_TOKEN` env var!');
+    rollbar.error('Failed to find `MIXPANEL_PROJECT_TOKEN` env var!');
 }
 
 const rootOffieNode = document.createElement('div');
