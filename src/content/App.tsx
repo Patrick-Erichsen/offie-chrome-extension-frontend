@@ -1,10 +1,9 @@
 import { useState } from 'react';
 import { useUrlChangeChrome } from './hooks/useUrlChangeChrome';
 import { OffiePortals } from './components/OffiePortals';
-import { hasWifiOrWorkspaceFilter, rollbar } from './utils';
+import { hasWifiOrWorkspaceFilter } from './utils';
 
 export const App = (): JSX.Element | null => {
-    useState(rollbar);
     const [isVisible, setIsVisible] = useState<boolean>(false);
 
     /**
