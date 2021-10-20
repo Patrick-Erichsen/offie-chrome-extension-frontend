@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect } from 'react';
 import { ChromeUrlUpdate } from '../../types/Chrome';
-import { logUrlChange } from '../utils';
+import * as analytics from '../analytics';
 
 /**
  * Invoke the `onUrlChange` param when Chrome detects that
@@ -20,16 +20,16 @@ export const useUrlChangeChrome = (
     useEffect(() => {
         const onUrlChangeWrapper = (request: ChromeUrlUpdate) => {
             if (request.event === 'URL_UPDATE') {
-                logUrlChange(request.url);
                 onUrlChange(request.url);
+                analytics.logUrlChange(request.url);
             }
         };
 
         chrome.runtime.onMessage.addListener(onUrlChangeWrapper);
 
         if (runOnInit) {
-            logUrlChange(window.location.href);
             onUrlChange(window.location.href);
+            analytics.logUrlChange(window.location.href);
         }
 
         return () => {
