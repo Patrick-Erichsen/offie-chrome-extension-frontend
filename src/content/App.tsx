@@ -1,11 +1,8 @@
 import { useState } from 'react';
 import { useUrlChangeChrome } from './hooks/useUrlChangeChrome';
 import { OffiePortals } from './components/OffiePortals';
-import {
-    hasWifiOrWorkspaceFilter,
-    logUrlChange,
-    isHomesSearchPage,
-} from './utils';
+import { hasWifiOrWorkspaceFilter, isHomesSearchPage } from './utils';
+import * as analytics from './analytics';
 
 export const App = (): JSX.Element | null => {
     const [isVisible, setIsVisible] = useState<boolean>(false);
@@ -18,7 +15,7 @@ export const App = (): JSX.Element | null => {
             const newIsVisible = hasWifiOrWorkspaceFilter(newUrl);
 
             setIsVisible(newIsVisible);
-            logUrlChange(newUrl);
+            analytics.logUrlChange(newUrl);
         }
     });
 

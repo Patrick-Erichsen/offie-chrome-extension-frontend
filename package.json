@@ -5,8 +5,8 @@
     "private": true,
     "scripts": {
         "test": "npx jest",
-        "build": "webpack --mode=production",
-        "start": "webpack --watch --mode=development",
+        "build": "webpack --mode=production --env production",
+        "start": "webpack --watch --mode=development --env development",
         "prettier": "prettier 'src/**/*.{ts,tsx}'",
         "clean": "rm -rf dist/ node_modules",
         "prettier:fix": "prettier --write 'src/**/*.{ts,tsx}'",

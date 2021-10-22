@@ -2,7 +2,7 @@ import type { SentimentScore } from '@aws-sdk/client-comprehend';
 import * as qs from 'qs';
 import { SentimenyKeysKeys, WifiSentiment } from '../../types/Offie';
 
-export const WIFI_AMENITY_ID = 4;
+export const OFFIE_URL = 'https://offie.co';
 
 export const sentimentKeys: {
     [key in SentimenyKeysKeys]: keyof SentimentScore;

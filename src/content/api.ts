@@ -18,7 +18,7 @@ export const getListingsDetails = async (
 
     const urlWithParams = listingsIds.reduce((acc, listingId) => {
         return `${acc}&listingId=${listingId}`;
-    }, `${apiUrl}/dev/listingsDetails?`);
+    }, `${apiUrl}/listingsDetails?`);
 
     try {
         const {

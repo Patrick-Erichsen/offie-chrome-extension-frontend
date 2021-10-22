@@ -1,4 +1,5 @@
-import { Typography, Link } from '@mui/material';
+import { Typography } from '@mui/material';
+import { OFFIE_URL } from '../../utils';
 import AirbnbLink from '../AirbnbLink';
 
 const InfoPopoverFooter = (): JSX.Element => {
@@ -19,10 +20,7 @@ const InfoPopoverFooter = (): JSX.Element => {
                     color: '#717171',
                 }}
             >
-                <AirbnbLink
-                    href={process.env.OFFIE_FEEDBACK_URL}
-                    variant="subtitle2"
-                >
+                <AirbnbLink href={`${OFFIE_URL}/feedback`} variant="subtitle2">
                     Feedback
                 </AirbnbLink>
             </Typography>
@@ -35,7 +33,7 @@ const InfoPopoverFooter = (): JSX.Element => {
             >
                 Made by{' '}
                 <AirbnbLink
-                    href={process.env.OFFIE_URL}
+                    href={OFFIE_URL}
                     target="_blank"
                     rel="noopener"
                     variant="subtitle2"
