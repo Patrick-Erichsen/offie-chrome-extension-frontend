@@ -1,6 +1,6 @@
 {
   "name": "Offie",
-  "description": "Find Airbnbs equipped for remote work.",
+  "description": "View Airbnb Wifi and workspace info from the search results page",
   "manifest_version": 3,
   "version": "0.0.1",
   "icons": {
@@ -82,5 +82,12 @@
         "content.js"
       ]
     }
-  ]
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["*.map"],
+      "matches": [ "https://www.airbnb.com/*" ]
+    }
+  ],
+  "key": "eaiodlbaagpaplcmplljdmpcpbejhbih"
 }

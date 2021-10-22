@@ -183,7 +183,7 @@ export const waitForListingsLoad = async (): Promise<void> => {
     let curWaitMs = 250;
 
     const waitIntervalMs = 250;
-    const maxWaitMs = 5000;
+    const maxWaitMs = 10000;
 
     return new Promise((resolve, reject) => {
         const interval = setInterval(async () => {
@@ -211,22 +211,20 @@ export const waitForMapLoad = async (): Promise<void> => {
     let curWaitMs = 250;
 
     const waitIntervalMs = 250;
-    const maxWaitMs = 5000;
+    const maxWaitMs = 10000;
 
     return new Promise((resolve, reject) => {
         const interval = setInterval(async () => {
-            const mapContainer = document.querySelector(
-                'div[data-veloute="map/GoogleMap"]'
-            );
+            const mapMarkers = document.querySelectorAll('[data-veloute]');
 
-            if (mapContainer && mapContainer.childElementCount > 1) {
+            if (mapMarkers && mapMarkers.length > 0) {
                 clearInterval(interval);
                 resolve();
             } else if (curWaitMs <= maxWaitMs) {
                 curWaitMs += waitIntervalMs;
             } else {
                 reject(
-                    new Error(`Failed to detect map load in ${maxWaitMs}ms`)
+                    new Error(`Failed to find a map marker in ${maxWaitMs}ms`)
                 );
             }
         }, waitIntervalMs);

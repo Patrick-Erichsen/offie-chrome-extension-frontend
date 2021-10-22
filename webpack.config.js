@@ -2,7 +2,7 @@ const path = require('path');
 const CopyPlugin = require('copy-webpack-plugin');
 const Dotenv = require('dotenv-webpack');
 
-const config = {
+module.exports = (env) => ({
     entry: {
         content: path.join(__dirname, './src/content/index.tsx'),
         background: path.join(__dirname, './src/background/index.ts'),
@@ -77,11 +77,11 @@ const config = {
         contentBase: './dist',
     },
     plugins: [
-        new Dotenv(),
+        new Dotenv({
+            path: `.env.${env.production ? 'production' : 'development'}`,
+        }),
         new CopyPlugin({
             patterns: [{ from: 'assets', to: '.' }],
         }),
     ],
-};
-
-module.exports = config;
+});
