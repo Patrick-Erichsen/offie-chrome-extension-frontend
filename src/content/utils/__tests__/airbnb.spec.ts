@@ -104,4 +104,18 @@ describe('airbnb.ts', () => {
             expect(airbnb.hasWifiOrWorkspaceFilter(mockUrl)).toBe(false);
         });
     });
+
+    describe('isHomesSearchPage()', () => {
+        it('returns false if not a homes search page', () => {
+            expect(
+                airbnb.isHomesSearchPage('https://www.airbnb.com/s/homes')
+            ).toBe(true);
+        });
+
+        it('returns false if not a homes search page', () => {
+            expect(airbnb.isHomesSearchPage('https://www.airbnb.com')).toBe(
+                false
+            );
+        });
+    });
 });

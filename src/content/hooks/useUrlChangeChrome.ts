@@ -10,8 +10,6 @@ import * as analytics from '../analytics';
  * If the `runOnInit` param is not explicitly set to false,
  * the `onUrlChange` param is invoked on the initial render
  * with the value of `window.location.href`.
- *
- * Note: All URL changes are logged.
  */
 export const useUrlChangeChrome = (
     onUrlChange: (url: string) => void,

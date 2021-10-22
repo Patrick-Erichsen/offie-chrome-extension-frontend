@@ -1,20 +1,31 @@
 import { useState } from 'react';
 import { useUrlChangeChrome } from './hooks/useUrlChangeChrome';
 import { OffiePortals } from './components/OffiePortals';
-import { hasWifiOrWorkspaceFilter } from './utils';
+import {
+    hasWifiOrWorkspaceFilter,
+    logUrlChange,
+    isHomesSearchPage,
+} from './utils';
 
 export const App = (): JSX.Element | null => {
     const [isVisible, setIsVisible] = useState<boolean>(false);
+
+    useUrlChangeChrome((newUrl) => {
+        /**
+         * If a user is not on the search page, ignore the update
+         */
+        if (isHomesSearchPage(newUrl)) {
+            const newIsVisible = hasWifiOrWorkspaceFilter(newUrl);
+
+            setIsVisible(newIsVisible);
+            logUrlChange(newUrl);
+        }
+    });
 
     /**
      * Only display our portals if the `Wifi` or
      * `Dedicated workspace` filters are active
      */
-    useUrlChangeChrome((newUrl) => {
-        const newIsVisible = hasWifiOrWorkspaceFilter(newUrl);
-        setIsVisible(newIsVisible);
-    });
-
     if (!isVisible) {
         return null;
     }
