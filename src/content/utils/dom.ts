@@ -34,9 +34,11 @@ export const getAllListingIds = (): string[] | null => {
     if (listings.length === 0) {
         return null;
     }
+    console.log({ listings });
 
     return Array.from(listings).reduce((acc, listing) => {
         const listingId = getListingId(listing);
+        console.log({ listingId });
 
         if (listingId) {
             return [...acc, listingId];
@@ -193,7 +195,13 @@ export const waitForListingsLoad = async (): Promise<void> => {
                 'div[itemprop=itemListElement]'
             );
 
-            if (listings.length > 0) {
+            const footer = document.querySelector(
+                'div[data-section-id="EXPLORE_NUMBERED_PAGINATION"'
+            );
+
+            if (footer) {
+                console.log({ footer, listings });
+
                 clearInterval(interval);
                 resolve();
             } else if (curWaitMs <= maxWaitMs) {
