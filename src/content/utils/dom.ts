@@ -36,11 +36,9 @@ export const getAllListingIds = (): string[] | null => {
     if (listings.length === 0) {
         return null;
     }
-    console.log({ listings });
 
     return Array.from(listings).reduce((acc, listing) => {
         const listingId = getListingId(listing);
-        console.log({ listingId });
 
         if (listingId) {
             return [...acc, listingId];

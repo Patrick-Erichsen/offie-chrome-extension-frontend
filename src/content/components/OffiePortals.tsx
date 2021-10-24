@@ -53,7 +53,6 @@ export const OffiePortals = (): JSX.Element | null => {
     const [viewedListingIds, setViewedListingIds] = useState<string[]>([]);
     const [listingsDetails, setListingsDetails] =
         useState<ListingDetailsObj | null>(null);
-    console.log(listingIds);
 
     /**
      * On a URL change:
