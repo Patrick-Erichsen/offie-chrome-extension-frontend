@@ -138,7 +138,7 @@ export const insertBeforeBadge = (
     badgeContainer.insertBefore(offieNode, displayBadge);
 };
 
-const getOffieNodeId = (listingId: string) => {
+export const getOffieNodeId = (listingId: string): string => {
     return `${OFFIE_NODE_ID_PREFIX}-${listingId}`;
 };
 
