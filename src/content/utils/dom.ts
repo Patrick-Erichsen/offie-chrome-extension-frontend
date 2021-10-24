@@ -1,6 +1,8 @@
 import { rollbar } from './rollbar';
 
 export const OFFIE_NODE_ID_PREFIX = 'offie-node';
+export const LISTINGS_FOOTER_SECTION_ID = 'EXPLORE_NUMBERED_PAGINATION';
+export const ITEM_LIST_EL = 'itemListElement';
 
 const NUM_ROWS_WITH_BADGE = 6;
 const NUM_ROWS_WITH_BUILDING_INFO = 5;
@@ -21,13 +23,15 @@ export const getListingId = (listing: Element): string | null => {
 
     const { pathname } = new URL(`http://${urlWithoutProtocol}`);
 
-    const listingId = pathname.split('/')[2];
+    const paths = pathname.split('/');
+
+    const listingId = pathname.split('/')[paths.length - 1];
 
     return listingId;
 };
 
 export const getAllListingIds = (): string[] | null => {
-    const listings = document.querySelectorAll('div[itemprop=itemListElement]');
+    const listings = document.querySelectorAll(`div[itemprop=${ITEM_LIST_EL}]`);
 
     if (listings.length === 0) {
         return null;
@@ -134,7 +138,7 @@ export const insertBeforeBadge = (
     badgeContainer.insertBefore(offieNode, displayBadge);
 };
 
-const getOffieNodeId = (listingId: string) => {
+export const getOffieNodeId = (listingId: string): string => {
     return `${OFFIE_NODE_ID_PREFIX}-${listingId}`;
 };
 
@@ -188,10 +192,16 @@ export const waitForListingsLoad = async (): Promise<void> => {
     return new Promise((resolve, reject) => {
         const interval = setInterval(async () => {
             const listings = document.querySelectorAll(
-                'div[itemprop=itemListElement]'
+                `div[itemprop=${ITEM_LIST_EL}]`
             );
 
-            if (listings.length > 0) {
+            const hasListings = listings.length > 0;
+
+            const hasFooter = !!document.querySelector(
+                `div[data-section-id="${LISTINGS_FOOTER_SECTION_ID}"`
+            );
+
+            if (hasFooter && hasListings) {
                 clearInterval(interval);
                 resolve();
             } else if (curWaitMs <= maxWaitMs) {
