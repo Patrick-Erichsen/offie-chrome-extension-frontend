@@ -1,15 +1,20 @@
-const webpack = require('webpack')
-const path = require('path')
-const CopyPlugin = require('copy-webpack-plugin')
+const path = require('path');
+const CopyPlugin = require('copy-webpack-plugin');
+const Dotenv = require('dotenv-webpack');
 
-const config = {
+module.exports = (env) => ({
     entry: {
         content: path.join(__dirname, './src/content/index.tsx'),
         background: path.join(__dirname, './src/background/index.ts'),
     },
     output: { path: path.join(__dirname, 'dist'), filename: '[name].js' },
+    devtool: 'cheap-module-source-map',
     module: {
         rules: [
+            {
+                test: /\.(png|woff|woff2|eot|ttf|svg)$/,
+                loader: 'url-loader',
+            },
             {
                 test: /\.(js|jsx)$/,
                 use: 'babel-loader',
@@ -44,6 +49,12 @@ const config = {
                 use: 'file-loader',
             },
             {
+                test: /\.m?js/,
+                resolve: {
+                    fullySpecified: false,
+                },
+            },
+            {
                 test: /\.png$/,
                 use: [
                     {
@@ -66,10 +77,11 @@ const config = {
         contentBase: './dist',
     },
     plugins: [
+        new Dotenv({
+            path: `.env.${env.production ? 'production' : 'development'}`,
+        }),
         new CopyPlugin({
             patterns: [{ from: 'assets', to: '.' }],
         }),
     ],
-}
-
-module.exports = config
+});

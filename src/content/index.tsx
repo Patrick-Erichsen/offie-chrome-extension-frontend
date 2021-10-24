@@ -1,25 +1,30 @@
-import * as React from 'react'
-import ReactDOM from 'react-dom'
-import App from './App'
-import { FILTER_CHIP_GROUP_ID } from './selectors'
+import '@fontsource/montserrat';
+import '@fontsource/montserrat/600.css';
+import mixpanel from 'mixpanel-browser';
+import { StrictMode } from 'react';
+import ReactDOM from 'react-dom';
+import { ThemeProvider } from '@mui/material';
+import { theme, rollbar } from './utils';
+import { App } from './App';
 
-const filterChips = document.getElementById(FILTER_CHIP_GROUP_ID)
+const mixpanelToken = process.env.MIXPANEL_PROJECT_TOKEN;
 
-const app = document.createElement('div')
-
-app.id = 'root'
-
-if (!filterChips) {
-    throw new Error(
-        `Failed to find filter chips with ID: ${FILTER_CHIP_GROUP_ID}`
-    )
+if (mixpanelToken) {
+    mixpanel.init(mixpanelToken);
+} else {
+    rollbar.error('Failed to find `MIXPANEL_PROJECT_TOKEN` env var!');
 }
 
-filterChips.appendChild(app)
+const rootOffieNode = document.createElement('div');
+rootOffieNode.id = 'offie-node-root';
+
+document.body.appendChild(rootOffieNode);
 
 ReactDOM.render(
-    <React.StrictMode>
-        <App />
-    </React.StrictMode>,
-    document.getElementById('root')
-)
+    <StrictMode>
+        <ThemeProvider theme={theme}>
+            <App />
+        </ThemeProvider>
+    </StrictMode>,
+    rootOffieNode
+);

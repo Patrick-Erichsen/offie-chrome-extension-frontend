@@ -1,13 +1,17 @@
-import firebase from 'firebase/app'
+import { ChromeUrlUpdate } from '../types/Chrome';
 
-const firebaseConfig = {
-    apiKey: 'AIzaSyAVo_JapaTTkGb4sKy7_K5TSO62gX9JSIE',
-    authDomain: 'offie-312703.firebaseapp.com',
-    projectId: 'offie-312703',
-    storageBucket: 'offie-312703.appspot.com',
-    messagingSenderId: '402258475207',
-    appId: '1:402258475207:web:c68e4208d204ddf0fa26e2',
-    measurementId: 'G-P59ZD5NHVT',
-}
+chrome.tabs.onUpdated.addListener((tabId, { url }) => {
+    if (url) {
+        const newUrl: ChromeUrlUpdate = { event: 'URL_UPDATE', url };
 
-firebase.initializeApp(firebaseConfig)
+        chrome.tabs.sendMessage(tabId, newUrl);
+    }
+});
+
+chrome.runtime.onInstalled.addListener(() => {
+    const uninstallUrl = process.env.OFFIE_UNINSTALL_URL;
+
+    if (uninstallUrl) {
+        chrome.runtime.setUninstallURL(uninstallUrl);
+    }
+});
