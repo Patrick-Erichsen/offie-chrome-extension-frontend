@@ -9,9 +9,5 @@ chrome.tabs.onUpdated.addListener((tabId, { url }) => {
 });
 
 chrome.runtime.onInstalled.addListener(() => {
-    const uninstallUrl = process.env.OFFIE_UNINSTALL_URL;
-
-    if (uninstallUrl) {
-        chrome.runtime.setUninstallURL(uninstallUrl);
-    }
+    chrome.runtime.setUninstallURL('https://offie.co/uninstall');
 });

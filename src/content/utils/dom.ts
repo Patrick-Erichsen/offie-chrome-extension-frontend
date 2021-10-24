@@ -21,7 +21,7 @@ export const getListingId = (listing: Element): string | null => {
 
     const { pathname } = new URL(`http://${urlWithoutProtocol}`);
 
-    const listingId = pathname.split('/')[2];
+    const listingId = pathname.split('/')[pathname.length - 1];
 
     return listingId;
 };

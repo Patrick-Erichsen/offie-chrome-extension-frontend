@@ -27,7 +27,7 @@ export const getListingsDetails = async (
 
         return data;
     } catch (err) {
-        rollbar.error({ err });
+        rollbar.error(JSON.stringify(err));
 
         return null;
     }
