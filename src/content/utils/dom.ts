@@ -1,6 +1,8 @@
 import { rollbar } from './rollbar';
 
 export const OFFIE_NODE_ID_PREFIX = 'offie-node';
+export const LISTINGS_FOOTER_SECTION_ID = 'EXPLORE_NUMBERED_PAGINATION';
+export const ITEM_LIST_EL = 'itemListElement';
 
 const NUM_ROWS_WITH_BADGE = 6;
 const NUM_ROWS_WITH_BUILDING_INFO = 5;
@@ -29,7 +31,7 @@ export const getListingId = (listing: Element): string | null => {
 };
 
 export const getAllListingIds = (): string[] | null => {
-    const listings = document.querySelectorAll('div[itemprop=itemListElement]');
+    const listings = document.querySelectorAll(`div[itemprop=${ITEM_LIST_EL}]`);
 
     if (listings.length === 0) {
         return null;
@@ -192,16 +194,16 @@ export const waitForListingsLoad = async (): Promise<void> => {
     return new Promise((resolve, reject) => {
         const interval = setInterval(async () => {
             const listings = document.querySelectorAll(
-                'div[itemprop=itemListElement]'
+                `div[itemprop=${ITEM_LIST_EL}]`
             );
 
-            const footer = document.querySelector(
-                'div[data-section-id="EXPLORE_NUMBERED_PAGINATION"'
+            const hasListings = listings.length > 0;
+
+            const hasFooter = !!document.querySelector(
+                `div[data-section-id="${LISTINGS_FOOTER_SECTION_ID}"`
             );
 
-            if (footer) {
-                console.log({ footer, listings });
-
+            if (hasFooter && hasListings) {
                 clearInterval(interval);
                 resolve();
             } else if (curWaitMs <= maxWaitMs) {
