@@ -10,4 +10,9 @@ chrome.tabs.onUpdated.addListener((tabId, { url }) => {
 
 chrome.runtime.onInstalled.addListener(() => {
     chrome.runtime.setUninstallURL('https://offie.co/uninstall');
+
+    chrome.tabs.create({
+        url: 'https://offie.co/welcome',
+        active: true,
+    });
 });
