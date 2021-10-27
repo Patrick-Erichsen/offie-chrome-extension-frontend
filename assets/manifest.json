@@ -2,7 +2,7 @@
   "name": "Offie - Airbnb Wifi Reviews",
   "description": "View Airbnb Wifi and workspace info from the search results page",
   "manifest_version": 3,
-  "version": "0.0.1",
+  "version": "0.0.3",
   "icons": {
     "16": "img/offie-logo-16.png",
     "48": "img/offie-logo-48.png",
