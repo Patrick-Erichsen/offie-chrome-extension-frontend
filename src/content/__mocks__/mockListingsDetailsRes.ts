@@ -30,7 +30,7 @@ const mockListingsDetailsRes: ListingsDetailsRes = {
             },
         },
         '47144474': {
-            workspaceAmenities: ['desk', 'office chair'],
+            workspaceAmenities: ['office chair', 'desk'],
             wifiSpeed: 300,
             wifiSentiment: {
                 overallSentiment: null,
