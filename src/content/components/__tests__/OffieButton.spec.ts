@@ -7,6 +7,7 @@ describe('<OffieButton />', () => {
     describe('getButtonText', () => {
         let mockListingsDetails: ListingsDetailsRes;
         let mockWifiSentiment: WifiSentiment;
+        let mockNumWifiReviews: number;
 
         beforeEach(() => {
             mockListingsDetails = JSON.parse(
@@ -18,6 +19,9 @@ describe('<OffieButton />', () => {
             );
 
             mockWifiSentiment = listingDetails[0].wifiSentiment;
+
+            // @ts-ignore
+            mockNumWifiReviews = listingDetails[0].wifiSentiment.reviews.length;
         });
 
         it('returns a `UNKNOWN` text when the reviews property is falsey', () => {
@@ -55,7 +59,7 @@ describe('<OffieButton />', () => {
             mockWifiSentiment.overallSentiment = sentimentKeys.POSITIVE;
 
             expect(OffieButton.getButtonText(mockWifiSentiment)).toEqual(
-                OffieButton.INFO_BUTTON_TEXT_VALS.GOOD_WIFI
+                `${OffieButton.INFO_BUTTON_TEXT_VALS.GOOD_WIFI} (${mockNumWifiReviews})`
             );
         });
 
@@ -63,7 +67,7 @@ describe('<OffieButton />', () => {
             mockWifiSentiment.overallSentiment = sentimentKeys.NEUTRAL;
 
             expect(OffieButton.getButtonText(mockWifiSentiment)).toEqual(
-                OffieButton.INFO_BUTTON_TEXT_VALS.OKAY_WIFI
+                `${OffieButton.INFO_BUTTON_TEXT_VALS.OKAY_WIFI} (${mockNumWifiReviews})`
             );
         });
 
@@ -71,7 +75,7 @@ describe('<OffieButton />', () => {
             mockWifiSentiment.overallSentiment = sentimentKeys.MIXED;
 
             expect(OffieButton.getButtonText(mockWifiSentiment)).toEqual(
-                OffieButton.INFO_BUTTON_TEXT_VALS.OKAY_WIFI
+                `${OffieButton.INFO_BUTTON_TEXT_VALS.OKAY_WIFI} (${mockNumWifiReviews})`
             );
         });
 
@@ -79,7 +83,7 @@ describe('<OffieButton />', () => {
             mockWifiSentiment.overallSentiment = sentimentKeys.NEGATIVE;
 
             expect(OffieButton.getButtonText(mockWifiSentiment)).toEqual(
-                OffieButton.INFO_BUTTON_TEXT_VALS.POOR_WIFI
+                `${OffieButton.INFO_BUTTON_TEXT_VALS.POOR_WIFI} (${mockNumWifiReviews})`
             );
         });
 

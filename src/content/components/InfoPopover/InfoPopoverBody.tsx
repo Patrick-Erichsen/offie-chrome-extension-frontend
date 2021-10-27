@@ -2,6 +2,7 @@ import { Divider, Stack } from '@mui/material';
 import { InfoPopoverReviews } from './InfoPopoverReviews';
 import { InfoPopoverItem } from './InfoPopoverItem';
 import { ListingDetails } from '../../../types/Offie';
+import { getCapitalizedWorkspaceStr } from '../../utils';
 
 export interface InfoPopoverBodyProps {
     listingDetails: ListingDetails;
@@ -31,7 +32,9 @@ export const InfoPopoverBody = ({
                     title="Dedicated workspace"
                     value={
                         listingDetails.workspaceAmenities
-                            ? listingDetails.workspaceAmenities.toString()
+                            ? getCapitalizedWorkspaceStr(
+                                  listingDetails.workspaceAmenities
+                              )
                             : null
                     }
                 />
