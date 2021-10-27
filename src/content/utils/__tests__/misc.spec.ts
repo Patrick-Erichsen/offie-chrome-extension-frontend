@@ -30,4 +30,12 @@ describe('misc.ts', () => {
             );
         });
     });
+
+    describe('getCapitalizedWorkspaceStr()', () => {
+        it('returns a capitalized string of workspace amenities', () => {
+            expect(
+                misc.getCapitalizedWorkspaceStr(['office chair', 'desk'])
+            ).toEqual('Office chair, desk');
+        });
+    });
 });

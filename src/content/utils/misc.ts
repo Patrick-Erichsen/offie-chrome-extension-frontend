@@ -35,3 +35,13 @@ export const getParsedUrlSearch = (url: string): qs.ParsedQs => {
         ignoreQueryPrefix: true,
     });
 };
+
+export const getCapitalizedWorkspaceStr = (
+    workspaceAmenities: string[]
+): string => {
+    const joinedStr = workspaceAmenities.join(', ');
+    const capitalizedStr =
+        joinedStr.charAt(0).toUpperCase() + joinedStr.slice(1);
+
+    return capitalizedStr;
+};
