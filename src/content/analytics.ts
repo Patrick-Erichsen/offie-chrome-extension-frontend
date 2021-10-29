@@ -3,6 +3,12 @@ import { WifiSentiment } from '../types/Offie';
 import { getSearchLocation, getMappedSearchFilters } from './utils/airbnb';
 import { getParsedUrlSearch } from './utils/misc';
 
+/**
+ * Exort the mixpanel library as `lib` for one-off
+ * event tracking methods
+ */
+export * as lib from 'mixpanel-browser';
+
 export const eventNames = {
     AIRBNB_SEARCH_URL: 'airbnbSearchUrl',
     BUTTON_CLICK: 'offieButtonClick',

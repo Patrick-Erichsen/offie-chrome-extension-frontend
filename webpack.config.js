@@ -7,7 +7,13 @@ module.exports = (env) => ({
         content: path.join(__dirname, './src/content/index.tsx'),
         background: path.join(__dirname, './src/background/index.ts'),
     },
-    output: { path: path.join(__dirname, 'dist'), filename: '[name].js' },
+    output: {
+        path: path.join(
+            __dirname,
+            `${env.production ? 'prod-build' : 'dev-build'}`
+        ),
+        filename: '[name].js',
+    },
     devtool: 'cheap-module-source-map',
     module: {
         rules: [
