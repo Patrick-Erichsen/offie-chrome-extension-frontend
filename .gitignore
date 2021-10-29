@@ -117,8 +117,11 @@ jspm_packages/
 # Test Coverage
 coverage/
 
+# Development Build Code
+dev-build
+
 # Production Build Code
-dist/
+prod-build
 
 # Typescript v1 declaration files
 typings/

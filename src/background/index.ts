@@ -1,7 +1,13 @@
+import mixpanel from 'mixpanel-browser';
+import { rollbar, initAnalytics, logUrlChange } from '../utils';
 import { ChromeUrlUpdate } from '../types/Chrome';
+
+initAnalytics();
 
 chrome.tabs.onUpdated.addListener((tabId, { url }) => {
     if (url) {
+        logUrlChange(url);
+
         const newUrl: ChromeUrlUpdate = { event: 'URL_UPDATE', url };
 
         chrome.tabs.sendMessage(tabId, newUrl);
@@ -9,10 +15,21 @@ chrome.tabs.onUpdated.addListener((tabId, { url }) => {
 });
 
 chrome.runtime.onInstalled.addListener(() => {
-    chrome.runtime.setUninstallURL('https://offie.co/uninstall');
+    const environment = process.env.NODE_ENV;
 
-    chrome.tabs.create({
-        url: 'https://offie.co/welcome',
-        active: true,
-    });
+    if (!environment) {
+        rollbar.error(`Failed to find NODE_ENV env var!`);
+        return;
+    }
+
+    if (process.env.NODE_ENV === 'production') {
+        chrome.runtime.setUninstallURL(
+            `https://offie.co/uninstall?id=${mixpanel.get_distinct_id()}`
+        );
+
+        chrome.tabs.create({
+            url: 'https://offie.co/welcome',
+            active: true,
+        });
+    }
 });
