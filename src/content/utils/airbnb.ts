@@ -1,5 +1,5 @@
 import * as qs from 'qs';
-import { rollbar } from './rollbar';
+import { rollbar } from '../../utils/rollbar';
 import { getParsedUrlSearch } from './misc';
 
 export interface AirbnbFilterKeyMap {

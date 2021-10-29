@@ -1,19 +1,13 @@
 import '@fontsource/montserrat';
 import '@fontsource/montserrat/600.css';
-import mixpanel from 'mixpanel-browser';
 import { StrictMode } from 'react';
 import ReactDOM from 'react-dom';
 import { ThemeProvider } from '@mui/material';
-import { theme, rollbar } from './utils';
+import { theme } from './utils';
 import { App } from './App';
+import { initAnalytics } from '../utils';
 
-const mixpanelToken = process.env.MIXPANEL_PROJECT_TOKEN;
-
-if (mixpanelToken) {
-    mixpanel.init(mixpanelToken);
-} else {
-    rollbar.error('Failed to find `MIXPANEL_PROJECT_TOKEN` env var!');
-}
+initAnalytics();
 
 const rootOffieNode = document.createElement('div');
 rootOffieNode.id = 'offie-node-root';
