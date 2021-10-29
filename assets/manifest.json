@@ -1,6 +1,6 @@
 {
   "name": "Offie - Airbnb Wifi Reviews",
-  "description": "View Airbnb Wifi and workspace info from the search results page",
+  "description": "View Airbnb Wifi and workspace info from the search results page.",
   "manifest_version": 3,
   "version": "0.0.3",
   "icons": {

@@ -1,12 +1,26 @@
 import * as mixpanel from 'mixpanel-browser';
 import { WifiSentiment } from '../types/Offie';
-import { getSearchLocation, getMappedSearchFilters } from './utils/airbnb';
-import { getParsedUrlSearch } from './utils/misc';
+import {
+    getSearchLocation,
+    getMappedSearchFilters,
+} from '../content/utils/airbnb';
+import { getParsedUrlSearch } from '../content/utils/misc';
+import { rollbar } from './rollbar';
 
 export const eventNames = {
     AIRBNB_SEARCH_URL: 'airbnbSearchUrl',
     BUTTON_CLICK: 'offieButtonClick',
     MODAL_OPEN: 'offieModalOpen',
+};
+
+export const initAnalytics = (): void => {
+    const mixpanelToken = process.env.MIXPANEL_PROJECT_TOKEN;
+
+    if (mixpanelToken) {
+        mixpanel.init(mixpanelToken);
+    } else {
+        rollbar.error('Failed to find `MIXPANEL_PROJECT_TOKEN` env var!');
+    }
 };
 
 export const logUrlChange = (urlStr: string): void => {

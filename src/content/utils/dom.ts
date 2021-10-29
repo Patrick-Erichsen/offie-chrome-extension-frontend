@@ -1,4 +1,4 @@
-import { rollbar } from './rollbar';
+import { rollbar } from '../../utils/rollbar';
 
 export const OFFIE_NODE_ID_PREFIX = 'offie-node';
 export const LISTINGS_FOOTER_SECTION_ID = 'EXPLORE_NUMBERED_PAGINATION';

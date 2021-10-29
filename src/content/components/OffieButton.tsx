@@ -3,7 +3,7 @@ import { Button, ButtonProps } from '@mui/material';
 import { Wifi as WifiIcon } from '@mui/icons-material';
 import { ListingDetails, ReviewWithSentiment } from '../../types/Offie';
 import { sortReviewsByDateDesc, sentimentKeys } from '../utils';
-import * as analytics from '../analytics';
+import * as analytics from '../../utils/analytics';
 import { InfoPopover } from './InfoPopover';
 
 export interface OffieButtonProps extends ButtonProps {

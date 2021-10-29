@@ -1,6 +1,6 @@
 /* eslint-disable import/prefer-default-export */
 import axios from 'axios';
-import { rollbar } from './utils';
+import { rollbar } from '../utils';
 import type { ListingsDetailsRes, OffieApiRes } from '../types/Offie';
 
 export const getListingsDetails = async (
