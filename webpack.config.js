@@ -18,16 +18,11 @@ module.exports = (env) => ({
     module: {
         rules: [
             {
-                test: /\.(png|woff|woff2|eot|ttf|svg)$/,
+                test: /\.(png|woff|woff2|eot|ttf|otf|svg)$/,
                 loader: 'url-loader',
             },
             {
-                test: /\.(js|jsx)$/,
-                use: 'babel-loader',
-                exclude: /node_modules/,
-            },
-            {
-                test: /\.css$/,
+                test: /\.(css|scss)$/,
                 use: ['style-loader', 'css-loader'],
                 exclude: /\.module\.css$/,
             },
@@ -35,20 +30,6 @@ module.exports = (env) => ({
                 test: /\.ts(x)?$/,
                 loader: 'ts-loader',
                 exclude: /node_modules/,
-            },
-            {
-                test: /\.css$/,
-                use: [
-                    'style-loader',
-                    {
-                        loader: 'css-loader',
-                        options: {
-                            importLoaders: 1,
-                            modules: true,
-                        },
-                    },
-                ],
-                include: /\.module\.css$/,
             },
             {
                 test: /\.svg$/,

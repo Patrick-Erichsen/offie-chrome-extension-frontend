@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useUrlChangeChrome } from './hooks/useUrlChangeChrome';
 import { OffiePortals } from './components/OffiePortals';
 import { hasWifiOrWorkspaceFilter, isHomesSearchPage } from './utils';
+import './App.css';
 
 export const App = (): JSX.Element | null => {
     const [isVisible, setIsVisible] = useState<boolean>(false);

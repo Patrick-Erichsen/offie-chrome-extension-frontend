@@ -221,7 +221,7 @@ export const waitForMapLoad = async (): Promise<void> => {
     let curWaitMs = 250;
 
     const waitIntervalMs = 250;
-    const maxWaitMs = 10000;
+    const maxWaitMs = 30000;
 
     return new Promise((resolve, reject) => {
         const interval = setInterval(async () => {
