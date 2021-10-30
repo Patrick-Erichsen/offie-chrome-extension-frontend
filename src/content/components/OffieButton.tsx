@@ -119,12 +119,18 @@ export const OffieButton = ({
                 color="inherit"
                 variant="outlined"
                 onClick={handleClick}
+                sx={{
+                    '& .MuiButton-startIcon': {
+                        marginLeft: 0,
+                    },
+                }}
                 style={{
                     // Custom Styles
                     textTransform: 'none',
-                    fontWeight: 'bolder',
-                    fontSize: 13,
+                    fontFamily: 'CircularStd, Montserrat',
+                    fontWeight: 'lighter',
                     // Airbnb styles
+                    fontSize: 14,
                     height: 24,
                     padding: '3px 8px',
                     borderRadius: 4,
@@ -134,7 +140,7 @@ export const OffieButton = ({
                     outline: 0,
                     color: 'rgb(34, 34, 34)',
                 }}
-                startIcon={<WifiIcon />}
+                startIcon={<WifiIcon style={{ fontSize: 16 }} />}
             >
                 {getButtonText(listingDetails.wifiSentiment)}
             </Button>
