@@ -16,8 +16,8 @@ declare module '@mui/material/styles' {
 export const theme = createTheme({
     typography: {
         fontFamily: [
-            'CircularStd',
             'Montserrat',
+            'CircularStd',
             'BlinkMacSystemFont',
             '"Segoe UI"',
             'Roboto',
