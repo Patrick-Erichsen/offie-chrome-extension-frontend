@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect } from 'react';
 import { ChromeUrlUpdate } from '../../types/Chrome';
-import * as analytics from '../../utils/analytics';
+import { tryIdentifyUserFromUrlParam } from '../../utils/analytics';
 
 /**
  * Invoke the `onUrlChange` param when Chrome detects that
@@ -27,6 +27,8 @@ export const useUrlChangeChrome = (
         if (runOnInit) {
             onUrlChange(window.location.href);
         }
+
+        tryIdentifyUserFromUrlParam(window.location.href);
 
         return () => {
             chrome.runtime.onMessage.removeListener(onUrlChangeWrapper);
