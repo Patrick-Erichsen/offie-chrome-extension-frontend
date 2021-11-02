@@ -1,8 +1,16 @@
-import mixpanel from 'mixpanel-browser';
 import { rollbar, initAnalytics, logUrlChange } from '../utils';
-import { ChromeUrlUpdate } from '../types/Chrome';
+import { ChromeUninstallUrlUpdate, ChromeUrlUpdate } from '../types/Chrome';
 
 initAnalytics();
+
+export const isUninstallMsg = (
+    msg: unknown | ChromeUninstallUrlUpdate
+): msg is ChromeUninstallUrlUpdate => {
+    return (
+        (msg as ChromeUninstallUrlUpdate).event &&
+        (msg as ChromeUninstallUrlUpdate).event === 'UPDATE_UNINSTALL_URL'
+    );
+};
 
 chrome.tabs.onUpdated.addListener((tabId, { url }) => {
     if (url) {
@@ -23,13 +31,17 @@ chrome.runtime.onInstalled.addListener(() => {
     }
 
     if (process.env.NODE_ENV === 'production') {
-        chrome.runtime.setUninstallURL(
-            `https://offie.co/uninstall?id=${mixpanel.get_distinct_id()}`
-        );
+        chrome.runtime.setUninstallURL('https://offie.co/uninstall');
 
         chrome.tabs.create({
             url: 'https://offie.co/welcome',
             active: true,
         });
+    }
+});
+
+chrome.runtime.onMessage.addListener((request) => {
+    if (isUninstallMsg(request)) {
+        chrome.runtime.setUninstallURL(request.uninstallUrl);
     }
 });

@@ -5,10 +5,10 @@
     "private": true,
     "scripts": {
         "test": "npx jest",
-        "build": "rm -rf dist/ && webpack --mode=production --env production",
+        "build": "rm -rf prod-build/ && webpack --mode=production --env production",
         "start": "webpack --watch --mode=development --env development",
         "prettier": "prettier 'src/**/*.{ts,tsx}'",
-        "clean": "rm -rf dist/ node_modules",
+        "clean": "rm -rf prod-build/ node_modules",
         "prettier:fix": "prettier --write 'src/**/*.{ts,tsx}'",
         "lint": "eslint 'src/**/*.{ts,tsx}'",
         "lint:fix": "eslint --fix 'src/**/*.{ts,tsx}'"
