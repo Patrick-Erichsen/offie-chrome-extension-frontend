@@ -134,6 +134,14 @@ export const insertBeforeBadge = (
     badgeContainer.insertBefore(offieNode, displayBadge);
 };
 
+/**
+ * Checks if the `listingDetails` param has a `Rare find` badge.
+ *
+ * The hueristic we use is whether or not an `svg` element is found.
+ *
+ * The `Rare find` badge has a diamond SVG. A regular row containing either
+ * room info or building info only contains `span` elements.
+ */
 export const hasRareFindBadge = (listingDetails: HTMLElement): boolean => {
     const secondToLast = listingDetails.children[
         listingDetails.childElementCount - 2
