@@ -4,10 +4,6 @@ export const OFFIE_NODE_ID_PREFIX = 'offie-node';
 export const LISTINGS_FOOTER_SECTION_ID = 'EXPLORE_NUMBERED_PAGINATION';
 export const ITEM_LIST_EL = 'itemListElement';
 
-const NUM_ROWS_WITH_BADGE = 6;
-const NUM_ROWS_WITH_BUILDING_INFO = 5;
-const NUM_ROWS_WITHOUT_BUILDING_INFO = 4;
-
 export const getListingId = (listing: Element): string | null => {
     const urlMetaTag = listing.querySelector('meta[itemprop=url]');
 
@@ -138,6 +134,14 @@ export const insertBeforeBadge = (
     badgeContainer.insertBefore(offieNode, displayBadge);
 };
 
+export const hasRareFindBadge = (listingDetails: HTMLElement): boolean => {
+    const secondToLast = listingDetails.children[
+        listingDetails.childElementCount - 2
+    ] as HTMLElement;
+
+    return !!secondToLast.querySelector('svg');
+};
+
 export const getOffieNodeId = (listingId: string): string => {
     return `${OFFIE_NODE_ID_PREFIX}-${listingId}`;
 };
@@ -159,17 +163,10 @@ export const insertOffieNode = (listingId: string): void => {
     const offieNode = document.createElement('div');
     offieNode.id = getOffieNodeId(listingId);
 
-    switch (listingDetails.childElementCount) {
-        case NUM_ROWS_WITH_BADGE:
-            insertBeforeBadge(listingDetails, offieNode);
-            break;
-        case NUM_ROWS_WITH_BUILDING_INFO || NUM_ROWS_WITHOUT_BUILDING_INFO:
-            insertNewDetailsRow(listingDetails, offieNode);
-            break;
-        default:
-            throw new Error(
-                `Failed to find expected number of rows for listing: ${listingId}`
-            );
+    if (hasRareFindBadge(listingDetails)) {
+        insertBeforeBadge(listingDetails, offieNode);
+    } else {
+        insertNewDetailsRow(listingDetails, offieNode);
     }
 };
 
