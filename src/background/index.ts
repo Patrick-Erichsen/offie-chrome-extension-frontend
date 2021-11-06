@@ -22,21 +22,24 @@ chrome.tabs.onUpdated.addListener((tabId, { url }) => {
     }
 });
 
-chrome.runtime.onInstalled.addListener(() => {
-    const environment = process.env.NODE_ENV;
+chrome.runtime.onInstalled.addListener((details) => {
+    // @ts-ignore
+    if (details.reason === chrome.runtime.OnInstalledReason.INSTALL) {
+        const environment = process.env.NODE_ENV;
 
-    if (!environment) {
-        rollbar.error(`Failed to find NODE_ENV env var!`);
-        return;
-    }
+        if (!environment) {
+            rollbar.error(`Failed to find NODE_ENV env var!`);
+            return;
+        }
 
-    if (process.env.NODE_ENV === 'production') {
-        chrome.runtime.setUninstallURL('https://offie.co/uninstall');
+        if (process.env.NODE_ENV === 'production') {
+            chrome.runtime.setUninstallURL('https://offie.co/uninstall');
 
-        chrome.tabs.create({
-            url: 'https://offie.co/welcome',
-            active: true,
-        });
+            chrome.tabs.create({
+                url: 'https://offie.co/welcome',
+                active: true,
+            });
+        }
     }
 });
 
