@@ -1,6 +1,5 @@
 import * as qs from 'qs';
 import { rollbar } from '../../utils/rollbar';
-import { getParsedUrlSearch } from './misc';
 
 export interface AirbnbFilterKeyMap {
     [key: number]: string;
@@ -28,6 +27,8 @@ export type numericFilterKeyStrs =
 export const WIFI_FILTER_KEY_NUM = 4;
 
 export const DEDICATED_WORKSPACE_FILTER_KEY_NUM = 47;
+
+export const HOMES_SEARCH_ROUTE = '/homes';
 
 /**
  * What is `kg_and_tags`? E.g. `Beachfront`, `Ski-in/ski-out` filters
@@ -266,43 +267,8 @@ export const getMappedSearchFilters = (
     }, {});
 };
 
-/**
- * Check if an Airbnb search URL contains a filter for `Wifi` or
- * `Dedicated workspaces`.
- */
-export const hasWifiOrWorkspaceFilter = (urlStr: string): boolean => {
-    const search = getParsedUrlSearch(urlStr);
-    const filters = getMappedSearchFilters(search);
-
-    const { amenities } = filters;
-
-    // If a user has not applied any filters yet, return
-    if (!amenities) {
-        return false;
-    }
-
-    // We expect the amenities URL param to be an array type, so log an error
-    // if it is not an array
-    if (!Array.isArray(amenities)) {
-        rollbar.warning(
-            `Expected the amenities key to an array, but found: ${typeof amenities}`
-        );
-
-        return false;
-    }
-
-    const hasWifiFilter = amenities.includes(
-        FILTERABLE_AMENITY_ID_TO_STR[WIFI_FILTER_KEY_NUM]
-    );
-    const hasDedicatedWorkspaceFilter = amenities.includes(
-        FILTERABLE_AMENITY_ID_TO_STR[DEDICATED_WORKSPACE_FILTER_KEY_NUM]
-    );
-
-    return hasWifiFilter || hasDedicatedWorkspaceFilter;
-};
-
 export const isHomesSearchPage = (url: string): boolean => {
     const { pathname } = new URL(url);
 
-    return pathname.includes('/homes');
+    return pathname.includes(HOMES_SEARCH_ROUTE);
 };
