@@ -25,9 +25,11 @@ export const initAnalytics = (): void => {
 };
 
 export const tryIdentifyUserFromUrlParam = (url: string): void => {
-    const search = getParsedUrlSearch(url);
+    const { search } = new URL(url);
 
-    const urlMixpanelId = search.mixpanel_id;
+    const parsedSearch = getParsedUrlSearch(search);
+
+    const urlMixpanelId = parsedSearch.mixpanel_id;
 
     if (typeof urlMixpanelId !== 'string') {
         return;
@@ -45,11 +47,14 @@ export const tryIdentifyUserFromUrlParam = (url: string): void => {
     }
 };
 
-export const logUrlChange = (urlStr: string): void => {
-    const search = getParsedUrlSearch(urlStr);
+export const logUrlChange = (url: string): void => {
+    const { search, pathname } = new URL(url);
 
-    const locations = getSearchLocation(search.query);
-    const filters = getMappedSearchFilters(search);
+    const decodedPathname = decodeURIComponent(pathname);
+    const parsedSearch = getParsedUrlSearch(search);
+
+    const locations = getSearchLocation(decodedPathname);
+    const filters = getMappedSearchFilters(parsedSearch);
 
     mixpanel.track(eventNames.AIRBNB_SEARCH_URL, { ...locations, ...filters });
 };

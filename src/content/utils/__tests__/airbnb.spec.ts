@@ -5,47 +5,48 @@ jest.mock('mixpanel-browser');
 describe('airbnb.ts', () => {
     describe('getSearchLocation()', () => {
         it('returns a `country` key when one location is provided', () => {
-            const locations = airbnb.getSearchLocation('United States');
+            const locations = airbnb.getSearchLocation(
+                '/s/United States/homes'
+            );
             expect(locations.country).toEqual('United States');
         });
 
         it('returns a `state` key when two locations are provided', () => {
-            const locations = airbnb.getSearchLocation('HI, United States');
+            const locations = airbnb.getSearchLocation(
+                '/s/HI--United-States/homes'
+            );
             expect(locations.state).toEqual('HI');
         });
 
         it('returns a `city` key when three locations are provided', () => {
             const locations = airbnb.getSearchLocation(
-                'Honolulu, HI, United States'
+                '/s/Honolulu--HI--United-States/homes'
             );
             expect(locations.city).toEqual('Honolulu');
         });
 
         it('returns a `neighborhood` key when four locations are provided', () => {
             const locations = airbnb.getSearchLocation(
-                'Waikīkī, Honolulu, HI, United States'
+                '/s/Waikīkī--Honolulu--HI--United-States/homes'
             );
             expect(locations.neighborhood).toEqual('Waikīkī');
         });
 
         it('returns a `poi` key when five locations are provided', () => {
-            const locationStr = 'Oahu, Waikīkī, Honolulu, HI, United States';
-            const locations = airbnb.getSearchLocation(locationStr);
+            const locations = airbnb.getSearchLocation(
+                '/s/Oahu--Waikīkī--Honolulu--HI--United-States/homes'
+            );
 
             expect(locations.poi).toEqual('Oahu');
         });
 
         it('returns a `unknown` key with the full string if more than five locations are provided', () => {
             const locationStr =
-                'Test, Oahu, Waikīkī, Honolulu, HI, United States';
+                '/s/Test--Oahu--Waikīkī--Honolulu--HI--United-States/homes';
 
             const locations = airbnb.getSearchLocation(locationStr);
 
             expect(locations.unknown).toEqual(locationStr);
-        });
-
-        it('returns an empty object if the param is undefined', () => {
-            expect(airbnb.getSearchLocation(undefined)).toEqual({});
         });
     });
 

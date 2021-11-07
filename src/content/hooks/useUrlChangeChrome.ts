@@ -19,6 +19,15 @@ export const useUrlChangeChrome = (
     runOnInit = true
 ): void => {
     useEffect(() => {
+        const initialUrl = window.location.href;
+
+        tryIdentifyUserFromUrlParam(initialUrl);
+        logUrlChange(initialUrl);
+
+        if (runOnInit) {
+            onUrlChange(initialUrl);
+        }
+
         const onUrlChangeWrapper = (request: ChromeUrlUpdate) => {
             if (request.event === 'URL_UPDATE') {
                 logUrlChange(request.url);
@@ -27,13 +36,6 @@ export const useUrlChangeChrome = (
         };
 
         chrome.runtime.onMessage.addListener(onUrlChangeWrapper);
-
-        if (runOnInit) {
-            logUrlChange(window.location.href);
-            onUrlChange(window.location.href);
-        }
-
-        tryIdentifyUserFromUrlParam(window.location.href);
 
         return () => {
             chrome.runtime.onMessage.removeListener(onUrlChangeWrapper);
