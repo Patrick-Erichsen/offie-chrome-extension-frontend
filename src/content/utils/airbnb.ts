@@ -173,22 +173,20 @@ export const filterKeyToStringMap: {
 };
 
 /**
- * Parse our the individual location types from the `query` key
- * in `search` portion of a URL.
+ * Parse our the individual location types from the pathname of
+ * a search.
  */
-export const getSearchLocation = (
-    query: qs.ParsedQs[string]
-): AirbnbLocation => {
-    if (!query) {
-        return {};
-    }
+export const getSearchLocation = (pathname: string): AirbnbLocation => {
+    /**
+     * Index of the split pathname that includes the location.
+     *
+     * Example: `/s/United States/homes`
+     */
+    const LOCATION_PATHNAME_INDEX = 2;
 
-    // Assume that the query value is a string
-    // eslint-disable-next-line no-param-reassign
-    query = query as string;
-
-    const locations = query
-        .split(', ')
+    const locations = pathname
+        .split('/')
+        [LOCATION_PATHNAME_INDEX].split('--')
         .map((location) => location.replace('-', ' '));
 
     if (locations.length > 5) {
@@ -196,7 +194,7 @@ export const getSearchLocation = (
             `Failed to find expected number of locations in Airbnb location string! Num locations found: ${locations.length}`
         );
 
-        return { unknown: query };
+        return { unknown: pathname };
     }
 
     const locationKeys: Array<keyof AirbnbLocation> = [

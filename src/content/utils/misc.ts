@@ -26,11 +26,9 @@ export const sortReviewsByDateDesc = (
 };
 
 /**
- * Parse a URL string using our default configuration
+ * Parse the search portion of a URL using our default configuration
  */
-export const getParsedUrlSearch = (url: string): qs.ParsedQs => {
-    const { search } = new URL(url);
-
+export const getParsedUrlSearch = (search: string): qs.ParsedQs => {
     return qs.parse(search, {
         ignoreQueryPrefix: true,
     });
