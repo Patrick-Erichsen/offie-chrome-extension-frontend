@@ -177,9 +177,16 @@ export const filterKeyToStringMap: {
  * a search.
  */
 export const getSearchLocation = (pathname: string): AirbnbLocation => {
+    /**
+     * Index of the split pathname that includes the location.
+     *
+     * Example: `/s/United States/homes`
+     */
+    const LOCATION_PATHNAME_INDEX = 2;
+
     const locations = pathname
-        .split('/')[2]
-        .split('--')
+        .split('/')
+        [LOCATION_PATHNAME_INDEX].split('--')
         .map((location) => location.replace('-', ' '));
 
     if (locations.length > 5) {
