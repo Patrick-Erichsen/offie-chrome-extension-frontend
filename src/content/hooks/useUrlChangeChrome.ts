@@ -1,7 +1,10 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect } from 'react';
 import { ChromeUrlUpdate } from '../../types/Chrome';
-import { tryIdentifyUserFromUrlParam } from '../../utils/analytics';
+import {
+    logUrlChange,
+    tryIdentifyUserFromUrlParam,
+} from '../../utils/analytics';
 
 /**
  * Invoke the `onUrlChange` param when Chrome detects that
@@ -18,6 +21,7 @@ export const useUrlChangeChrome = (
     useEffect(() => {
         const onUrlChangeWrapper = (request: ChromeUrlUpdate) => {
             if (request.event === 'URL_UPDATE') {
+                logUrlChange(request.url);
                 onUrlChange(request.url);
             }
         };
@@ -25,6 +29,7 @@ export const useUrlChangeChrome = (
         chrome.runtime.onMessage.addListener(onUrlChangeWrapper);
 
         if (runOnInit) {
+            logUrlChange(window.location.href);
             onUrlChange(window.location.href);
         }
 

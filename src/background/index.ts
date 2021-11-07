@@ -1,4 +1,4 @@
-import { rollbar, initAnalytics, logUrlChange } from '../utils';
+import { rollbar, initAnalytics } from '../utils';
 import { ChromeUninstallUrlUpdate, ChromeUrlUpdate } from '../types/Chrome';
 
 initAnalytics();
@@ -14,8 +14,6 @@ export const isUninstallMsg = (
 
 chrome.tabs.onUpdated.addListener((tabId, { url }) => {
     if (url) {
-        logUrlChange(url);
-
         const newUrl: ChromeUrlUpdate = { event: 'URL_UPDATE', url };
 
         chrome.tabs.sendMessage(tabId, newUrl);
