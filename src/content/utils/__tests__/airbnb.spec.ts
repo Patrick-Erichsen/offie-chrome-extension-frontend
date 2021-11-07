@@ -85,26 +85,6 @@ describe('airbnb.ts', () => {
         });
     });
 
-    describe('hasWifiOrWorkspaceFilter()', () => {
-        it('returns true is the url string has the wifi filter key', () => {
-            const mockUrl = `https://www.airbnb.com/s/Downtown--Honolulu--HI--United-States/homes?amenities%5B%5D=${airbnb.WIFI_FILTER_KEY_NUM}`;
-
-            expect(airbnb.hasWifiOrWorkspaceFilter(mockUrl)).toBe(true);
-        });
-
-        it('returns true is the url string has the dedicated workspace filter key', () => {
-            const mockUrl = `https://www.airbnb.com/s/Downtown--Honolulu--HI--United-States/homes?amenities%5B%5D=${airbnb.DEDICATED_WORKSPACE_FILTER_KEY_NUM}`;
-
-            expect(airbnb.hasWifiOrWorkspaceFilter(mockUrl)).toBe(true);
-        });
-
-        it('returns false is the url string does not have the dedicated workspace or wifi filter keys', () => {
-            const mockUrl = `https://www.airbnb.com/s/Downtown--Honolulu--HI--United-States/homes`;
-
-            expect(airbnb.hasWifiOrWorkspaceFilter(mockUrl)).toBe(false);
-        });
-    });
-
     describe('isHomesSearchPage()', () => {
         it('returns false if not a homes search page', () => {
             expect(
