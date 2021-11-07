@@ -1,7 +1,5 @@
-import { rollbar, initAnalytics } from '../utils';
+import { rollbar } from '../utils';
 import { ChromeUninstallUrlUpdate, ChromeUrlUpdate } from '../types/Chrome';
-
-initAnalytics();
 
 export const isUninstallMsg = (
     msg: unknown | ChromeUninstallUrlUpdate
