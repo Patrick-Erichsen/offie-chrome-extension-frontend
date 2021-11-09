@@ -184,9 +184,14 @@ export const getSearchLocation = (pathname: string): AirbnbLocation => {
      */
     const LOCATION_PATHNAME_INDEX = 2;
 
-    const locations = pathname
-        .split('/')
-        [LOCATION_PATHNAME_INDEX].split('--')
+    const locPaths = pathname.split('/')[LOCATION_PATHNAME_INDEX];
+
+    if (!locPaths) {
+        return {};
+    }
+
+    const locations = locPaths
+        .split('--')
         .map((location) => location.replace('-', ' '));
 
     if (locations.length > 5) {

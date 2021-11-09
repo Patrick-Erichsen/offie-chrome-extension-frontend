@@ -9,15 +9,19 @@ export const App = (): JSX.Element | null => {
     const [isVisible, setIsVisible] = useState<boolean>(false);
 
     useUrlChangeChrome((newUrl) => {
+        const newIsVisible = isHomesSearchPage(newUrl);
+
         /**
          * Only render if on the homes search page
          */
-        setIsVisible(isHomesSearchPage(newUrl));
+        setIsVisible(newIsVisible);
 
         /**
-         * Only log URL changes from the root of the application
+         * Only log URL changes if we are on the homes search page
          */
-        logUrlChange(newUrl);
+        if (newIsVisible) {
+            logUrlChange(newUrl);
+        }
     });
 
     if (!isVisible) {
