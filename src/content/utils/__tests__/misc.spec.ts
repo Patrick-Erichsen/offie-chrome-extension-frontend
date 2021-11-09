@@ -4,11 +4,12 @@ import * as misc from '../misc';
 describe('misc.ts', () => {
     describe('getParsedUrlSearch()', () => {
         it('returns a parsed URL with the question mark stripped from the search', () => {
-            const search = misc.getParsedUrlSearch(
-                'https://www.test.com/path?test=1'
-            ) as { test: string };
+            const { search } = new URL('https://www.test.com/path?test=1');
 
-            expect(search.test.includes('?')).toBe(false);
+            const parsedSearch = misc.getParsedUrlSearch(search);
+
+            // @ts-ignore
+            expect(parsedSearch.test.includes('?')).toBe(false);
         });
     });
 

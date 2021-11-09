@@ -202,11 +202,7 @@ export const waitForListingsLoad = async (): Promise<void> => {
 
             const hasListings = listings.length > 0;
 
-            const hasFooter = !!document.querySelector(
-                `div[data-section-id="${LISTINGS_FOOTER_SECTION_ID}"`
-            );
-
-            if (hasFooter && hasListings) {
+            if (hasListings) {
                 clearInterval(interval);
                 resolve();
             } else if (curWaitMs <= maxWaitMs) {
