@@ -86,17 +86,21 @@ describe('airbnb.ts', () => {
         });
     });
 
-    describe('isHomesSearchPage()', () => {
-        it('returns false if not a homes search page', () => {
+    describe('isOffiePage()', () => {
+        it('returns true if homes page', () => {
+            expect(airbnb.isOffiePage('https://www.airbnb.com/s/homes')).toBe(
+                true
+            );
+        });
+
+        it('returns true if wishlist page', () => {
             expect(
-                airbnb.isHomesSearchPage('https://www.airbnb.com/s/homes')
+                airbnb.isOffiePage('https://www.airbnb.com/wishlists/998790603')
             ).toBe(true);
         });
 
-        it('returns false if not a homes search page', () => {
-            expect(airbnb.isHomesSearchPage('https://www.airbnb.com')).toBe(
-                false
-            );
+        it('returns false if not an offie page', () => {
+            expect(airbnb.isOffiePage('https://www.airbnb.com')).toBe(false);
         });
     });
 });

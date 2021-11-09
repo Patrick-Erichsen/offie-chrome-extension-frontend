@@ -30,6 +30,10 @@ export const DEDICATED_WORKSPACE_FILTER_KEY_NUM = 47;
 
 export const HOMES_SEARCH_ROUTE = '/homes';
 
+export const WISHLIST_ROUTE = '/wishlists';
+
+export const OFFIE_ROUTES = [HOMES_SEARCH_ROUTE, WISHLIST_ROUTE];
+
 /**
  * What is `kg_and_tags`? E.g. `Beachfront`, `Ski-in/ski-out` filters
  */
@@ -270,8 +274,8 @@ export const getMappedSearchFilters = (
     }, {});
 };
 
-export const isHomesSearchPage = (url: string): boolean => {
+export const isOffiePage = (url: string): boolean => {
     const { pathname } = new URL(url);
 
-    return pathname.includes(HOMES_SEARCH_ROUTE);
+    return OFFIE_ROUTES.some((route) => pathname.includes(route));
 };
