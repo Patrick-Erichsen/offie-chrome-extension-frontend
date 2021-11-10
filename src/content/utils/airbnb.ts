@@ -274,6 +274,12 @@ export const getMappedSearchFilters = (
     }, {});
 };
 
+export const isSearchUrl = (url: string): boolean => {
+    const { pathname } = new URL(url);
+
+    return pathname.includes(SEARCH_ROUTE);
+};
+
 export const isOffiePage = (url: string): boolean => {
     const { pathname } = new URL(url);
 
