@@ -28,11 +28,11 @@ export const WIFI_FILTER_KEY_NUM = 4;
 
 export const DEDICATED_WORKSPACE_FILTER_KEY_NUM = 47;
 
-export const HOMES_SEARCH_ROUTE = '/homes';
+export const SEARCH_ROUTE = '/s';
 
 export const WISHLIST_ROUTE = '/wishlists';
 
-export const OFFIE_ROUTES = [HOMES_SEARCH_ROUTE, WISHLIST_ROUTE];
+export const OFFIE_ROUTES = [SEARCH_ROUTE, WISHLIST_ROUTE];
 
 /**
  * What is `kg_and_tags`? E.g. `Beachfront`, `Ski-in/ski-out` filters
