@@ -47,7 +47,7 @@ export const tryIdentifyUserFromUrlParam = (url: string): void => {
     }
 };
 
-export const logUrlChange = (url: string): void => {
+export const logSearchUrl = (url: string): void => {
     const { search, pathname } = new URL(url);
 
     const decodedPathname = decodeURIComponent(pathname);

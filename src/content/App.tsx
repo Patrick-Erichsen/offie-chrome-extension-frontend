@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { useUrlChangeChrome } from './hooks/useUrlChangeChrome';
 import { OffiePortals } from './components/OffiePortals';
-import { isOffiePage } from './utils';
+import { isOffiePage, isSearchUrl } from './utils';
 import './App.css';
-import { logUrlChange } from '../utils';
+import { logSearchUrl } from '../utils';
 
 export const App = (): JSX.Element | null => {
     const [isVisible, setIsVisible] = useState<boolean>(false);
@@ -19,8 +19,8 @@ export const App = (): JSX.Element | null => {
         /**
          * Only log URL changes if we are on the homes search page
          */
-        if (newIsVisible) {
-            logUrlChange(newUrl);
+        if (newIsVisible && isSearchUrl(newUrl)) {
+            logSearchUrl(newUrl);
         }
     });
 
