@@ -116,16 +116,25 @@ export const insertBeforeBadge = (
         );
     }
 
-    const numChildrenBadge = badgeContainer.childElementCount;
+    /**
+     * Heuristic: `Rare find` badge has a diamond svg
+     */
+    const isRareFindBadge = !!badgeContainer.querySelector('svg');
 
-    const displayBadge = badgeContainer.children[
-        numChildrenBadge - 1
-    ] as HTMLElement;
+    /**
+     * Determined by `isRareFindBadge`
+     */
+    let insertionIndex: number;
 
-    if (numChildrenBadge > 1) {
+    if (isRareFindBadge) {
         const rareFindBadgeHidden = badgeContainer.children[0] as HTMLElement;
         rareFindBadgeHidden.style.setProperty('display', 'none', 'important');
+        insertionIndex = 1;
+    } else {
+        insertionIndex = 0;
     }
+
+    const displayBadge = badgeContainer.children[insertionIndex] as HTMLElement;
 
     badgeContainer.style.setProperty('gap', '5px');
     badgeContainer.style.setProperty('display', 'flex');
@@ -135,19 +144,22 @@ export const insertBeforeBadge = (
 };
 
 /**
- * Checks if the `listingDetails` param has a `Rare find` badge.
+ * Checks if the `listingDetails` param has a badge.
  *
- * The hueristic we use is whether or not an `svg` element is found.
+ * There are currently two known badge types:
+ *   - Rare find
+ *   - Date range
  *
- * The `Rare find` badge has a diamond SVG. A regular row containing either
- * room info or building info only contains `span` elements.
+ * The hueristic we use to determine if a property has a badge
+ * is whether or not the first children of the second to last
+ * row are `span` elements.
  */
-export const hasRareFindBadge = (listingDetails: HTMLElement): boolean => {
+export const hasBadge = (listingDetails: HTMLElement): boolean => {
     const secondToLast = listingDetails.children[
         listingDetails.childElementCount - 2
     ] as HTMLElement;
 
-    return !!secondToLast.querySelector('svg');
+    return secondToLast.children[0].nodeName !== 'SPAN';
 };
 
 export const getOffieNodeId = (listingId: string): string => {
@@ -171,7 +183,7 @@ export const insertOffieNode = (listingId: string): void => {
     const offieNode = document.createElement('div');
     offieNode.id = getOffieNodeId(listingId);
 
-    if (hasRareFindBadge(listingDetails)) {
+    if (hasBadge(listingDetails)) {
         insertBeforeBadge(listingDetails, offieNode);
     } else {
         insertNewDetailsRow(listingDetails, offieNode);
