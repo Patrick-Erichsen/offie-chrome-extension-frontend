@@ -1,45 +1,51 @@
 import { Typography } from '@mui/material';
-import { OFFIE_URL } from '../../utils';
 import AirbnbLink from '../AirbnbLink';
 
-const InfoPopoverFooter = (): JSX.Element => {
+const InfoPopoverFooter = (): JSX.Element | null => {
+    const discordInviteUrl = process.env.DISCORD_INVITE_URL;
+
+    if (!discordInviteUrl) {
+        return null;
+    }
+
     return (
         <footer
             style={{
-                height: 48,
-                padding: '0 24px',
+                height: 64,
+                padding: '12px 24px',
                 display: 'flex',
-                justifyContent: 'space-between',
+                justifyContent: 'center',
                 alignItems: 'center',
                 position: 'relative',
+                flexWrap: 'wrap',
             }}
         >
             <Typography
                 variant="subtitle2"
+                textAlign="center"
                 style={{
+                    width: '100%',
                     color: '#717171',
                 }}
             >
-                <AirbnbLink href={`${OFFIE_URL}/feedback`} variant="subtitle2">
-                    Feedback
+                <AirbnbLink
+                    href={discordInviteUrl}
+                    variant="subtitle2"
+                    target="_blank"
+                >
+                    Join the Offie Discord
                 </AirbnbLink>
             </Typography>
 
             <Typography
-                variant="subtitle2"
+                textAlign="center"
+                variant="caption"
                 style={{
+                    width: '100%',
                     color: '#717171',
                 }}
             >
-                Made by{' '}
-                <AirbnbLink
-                    href={OFFIE_URL}
-                    target="_blank"
-                    rel="noopener"
-                    variant="subtitle2"
-                >
-                    Offie
-                </AirbnbLink>
+                Connect with other remote professional workers
             </Typography>
         </footer>
     );
