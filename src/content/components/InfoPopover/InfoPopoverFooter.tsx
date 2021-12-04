@@ -45,7 +45,7 @@ const InfoPopoverFooter = (): JSX.Element | null => {
                     color: '#717171',
                 }}
             >
-                Connect with other remote professional workers
+                Connect with other remote professional workers in the US
             </Typography>
         </footer>
     );
