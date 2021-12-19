@@ -106,13 +106,21 @@ export const insertBeforeBadge = (
     listingDetails: HTMLElement,
     offieNode: HTMLElement
 ): void => {
-    const badgeContainer = listingDetails.children[
+    const badgeParentContainer = listingDetails.children[
         listingDetails.childElementCount - 2
     ] as HTMLElement;
 
-    if (!badgeContainer) {
+    if (!badgeParentContainer) {
         throw new Error(
             `Failed to find the 'badgeContainer' var in ${insertBeforeBadge.name}`
+        );
+    }
+
+    const badgeContainer = badgeParentContainer.children[0] as HTMLElement;
+
+    if (!badgeParentContainer) {
+        throw new Error(
+            `Failed to find the 'badgeParentContainer' var in ${insertBeforeBadge.name}`
         );
     }
 
